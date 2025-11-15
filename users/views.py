@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 class RegisterView(View):
     def get(self, request):
         form = CustomUserCreationForm()
+        if request.user.is_authenticated:
+            return redirect('users:profile')
         return render(request, 'users/register.html', {'form': form})
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
@@ -19,13 +21,15 @@ class RegisterView(View):
 class LoginView(View):
     def get(self, request):
         form = CustomUserLoginForm(request)
+        if request.user.is_authenticated:
+            return redirect('users:profile')
         return render(request, 'users/login.html', {'form': form})
     def post(self, request):
         form = CustomUserLoginForm(request, request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('home')
+            return redirect('users:profile')
         return render(request, 'users/login.html', {'form': form})
 
 class LogoutView(View):
@@ -35,6 +39,19 @@ class LogoutView(View):
 
 class ProfileView(View):
     def get(self, request):
-        profile = UserProfile.objects.get(user=request.user)
+        profile = request.user
         return render(request, 'users/profile.html', {'profile': profile})
     
+class ProfileUpdateView(View):
+    def get(self, request):
+        profile = request.user
+        form = UserProfileUpdateForm(instance=profile)
+        return render(request, 'users/profile_update.html', {'form': form, 'profile': profile})
+    
+    def post(self, request):
+        profile = request.user
+        form = UserProfileUpdateForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('users:profile')
+        return render(request, 'users/profile_update.html', {'form': form, 'profile': profile})
