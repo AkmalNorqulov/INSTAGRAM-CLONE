@@ -371,6 +371,7 @@
         <div class="logo">Instagram</div>
 
         <form id="loginForm" method="post">
+            {% csrf_token %}
             {{ form.username }}
           <div style="position:relative">
             {{ form.password }}
