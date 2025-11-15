@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+{% load static %}
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login • Instagram</title>
+<style>
+    body {
+        background-color: #fafafa;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        background: #fff;
+        border: 1px solid #dbdbdb;
+        width: 350px;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .container img {
+        width: 180px;
+        margin-bottom: 20px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0;
+        background: #fafafa;
+        border: 1px solid #dbdbdb;
+        border-radius: 4px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background: #3897f0;
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .bottom-box {
+        margin-top: 10px;
+        background: #fff;
+        border: 1px solid #dbdbdb;
+        padding: 20px;
+        font-size: 14px;
+    }
+
+    a {
+        color: #0095f6;
+        text-decoration: none;
+    }
+</style>
+</head>
+
+<body>
+    <div>
+        <div class="container">
+            <img src="{% static 'images/instagram.png' %}" alt="Instagram" />
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.username }}
+                {{ form.password }}
+                <button type="submit">Log In</button>
+            </form>
+        </div>
+        <div class="bottom-box">
+            Don't have an account? <a href="{% url 'users:register' %}">Sign up</a>
+        </div>
+    </div>
+</body>
+
+</html>
