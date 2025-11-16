@@ -368,7 +368,6 @@
           {{ form.username }}
           <div style="position:relative">
             {{ form.password }}
-<<<<<<< HEAD
 <button type="button" id="togglePwd" style="
     position:absolute;
     right:8px;
@@ -396,10 +395,6 @@
 </button>
 
 
-=======
-            <button type="button" id="togglePwd" title="Show password"
-              style="position:absolute;right:8px;top:8px;padding:6px 8px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer">Show</button>
->>>>>>> origin/main
           </div>
 
           <button id="loginBtn" class="btn">Log in</button>
@@ -435,7 +430,6 @@
   </div>
 
   <script>
-<<<<<<< HEAD
  // JS: kichik funksiyalar - parolni ko'rsatish va forma validatsiyasi
 (function(){
   const pwd = document.getElementById('id_password');
@@ -497,55 +491,6 @@
   });
 
 })();
-=======
-    // JS: kichik funksiyalar - parolni ko'rsatish va forma validatsiyasi
-    (function () {
-      const pwd = document.getElementById('password');
-      const toggle = document.getElementById('togglePwd');
-      const loginBtn = document.getElementById('loginBtn');
-      const username = document.getElementById('username');
-      const fbBtn = document.getElementById('fbBtn');
-
-      toggle.addEventListener('click', function () {
-        if (pwd.type === 'password') {
-          pwd.type = 'text';
-          toggle.textContent = 'Hide';
-          toggle.title = 'Hide password';
-        } else {
-          pwd.type = 'password';
-          toggle.textContent = 'Show';
-          toggle.title = 'Show password';
-        }
-      });
-
-      loginBtn.addEventListener('click', function () {
-        const user = username.value.trim();
-        const pass = pwd.value;
-        if (!user || !pass) {
-          alert('Iltimos, foydalanuvchi nomi va parolni kiriting.');
-          return;
-        }
-        // Demo: sahifada hech narsa yuborilmaydi, faqat vizual tasdiq
-        loginBtn.textContent = 'Logging in...';
-        loginBtn.disabled = true;
-        setTimeout(() => {
-          alert('Bu demo sahifa — asl tizimga ulanish yo‘q.\nFoydalanuvchi: ' + user);
-          loginBtn.textContent = 'Log in';
-          loginBtn.disabled = false;
-        }, 900);
-      });
-
-      fbBtn.addEventListener('click', function () {
-        alert('Facebook orqali kirish demo uchun ishlamaydi.');
-      });
-
-      // A11y: Enter tugmasini qulay qilish
-      [username, pwd].forEach(el => {
-        el.addEventListener('keydown', e => {
-          if (e.key === 'Enter') loginBtn.click();
-        });
-      });
->>>>>>> origin/main
 
   </script>
 </body>
