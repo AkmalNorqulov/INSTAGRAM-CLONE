@@ -1,13 +1,16 @@
 {% load static %}
+
+
+   
+
+
 <!doctype html>
 
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
     <link rel="stylesheet" href="{% static 'css/nav-bar.css' %}">
-    <title>Instagram Sidebar</title>
+    <title> {% block title %}Instagram{% endblock %}</title>
   </head>
   <body>
     <div id="app">
@@ -140,10 +143,10 @@
         {% endblock %}
       </main>
     </div>
-    <script type="module" src="">
 
 
 
+<script>
 const menuItems = document.querySelectorAll('.menu-item');
 
 menuItems.forEach(item => {

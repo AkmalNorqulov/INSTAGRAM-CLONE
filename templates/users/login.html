@@ -1,97 +1,10 @@
-<!-- <!DOCTYPE html>
-{% load static %}
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login • Instagram</title>
-<style>
-    body {
-        background-color: #fafafa;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .container {
-        background: #fff;
-        border: 1px solid #dbdbdb;
-        width: 350px;
-        padding: 40px;
-        text-align: center;
-    }
-
-    .container img {
-        width: 180px;
-        margin-bottom: 20px;
-    }
-
-    input {
-        width: 100%;
-        padding: 10px;
-        margin: 6px 0;
-        background: #fafafa;
-        border: 1px solid #dbdbdb;
-        border-radius: 4px;
-    }
-
-    button {
-        width: 100%;
-        padding: 10px;
-        background: #3897f0;
-        border: none;
-        color: white;
-        font-weight: bold;
-        border-radius: 4px;
-        margin-top: 10px;
-        cursor: pointer;
-    }
-
-    .bottom-box {
-        margin-top: 10px;
-        background: #fff;
-        border: 1px solid #dbdbdb;
-        padding: 20px;
-        font-size: 14px;
-    }
-
-    a {
-        color: #0095f6;
-        text-decoration: none;
-    }
-</style>
-</head>
-
-<body>
-    <div>
-        <div class="container">
-            <img src="{% static 'images/instagram.png' %}" alt="Instagram" />
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.username }}
-                {{ form.password }}
-                <button type="submit">Log In</button>
-            </form>
-        </div>
-        <div class="bottom-box">
-            Don't have an account? <a href="{% url 'users:register' %}">Sign up</a>
-        </div>
-    </div>
-</body>
-
-</html> -->
-
-
-
-
 
 <!doctype html>
 <html lang="uz">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Instagram-like Login (Dark)</title>
-  <!-- Google font -->
+  <title>Instagram Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -375,7 +288,33 @@
             {{ form.username }}
           <div style="position:relative">
             {{ form.password }}
-            <button type="button" id="togglePwd" title="Show password" style="position:absolute;right:8px;top:8px;padding:6px 8px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer">Show</button>
+<button type="button" id="togglePwd" style="
+    position:absolute;
+    right:8px;
+    top:50%;
+    transform:translateY(-50%);
+    padding:6px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right: 3%;
+    color: white;
+"> 
+ <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" 
+     fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 12c2-4 6-7 10-7s8 3 10 7"/>
+    <path d="M2 12c2 4 6 7 10 7s8-3 10-7"/>
+    <line x1="4" y1="4" x2="20" y2="20"/>
+</svg>
+
+
+
+</button>
+
+
           </div>
 
           <button id="loginBtn" class="btn">Log in</button>
@@ -408,55 +347,68 @@
   </div>
 
   <script>
-    // JS: kichik funksiyalar - parolni ko'rsatish va forma validatsiyasi
-    (function(){
-      const pwd = document.getElementById('password');
-      const toggle = document.getElementById('togglePwd');
-      const loginBtn = document.getElementById('loginBtn');
-      const username = document.getElementById('username');
-      const fbBtn = document.getElementById('fbBtn');
+ // JS: kichik funksiyalar - parolni ko'rsatish va forma validatsiyasi
+(function(){
+  const pwd = document.getElementById('id_password');
+  const toggle = document.getElementById('togglePwd');
+  const eyeIcon = document.getElementById('eyeIcon');
+  const loginBtn = document.getElementById('loginBtn');
+  const username = document.getElementById('username');
+  const fbBtn = document.getElementById('fbBtn');
 
-      toggle.addEventListener('click', function(){
-        if (pwd.type === 'password'){
-          pwd.type = 'text';
-          toggle.textContent = 'Hide';
-          toggle.title = 'Hide password';
-        } else {
-          pwd.type = 'password';
-          toggle.textContent = 'Show';
-          toggle.title = 'Show password';
-        }
-      });
+  // ---- YANGILANGAN QISM: KO‘Z IKONKASI + SHOW/HIDE ----
+  toggle.addEventListener('click', function(){
+    const isHidden = pwd.type === 'password';
+    pwd.type = isHidden ? 'text' : 'password';
 
-      loginBtn.addEventListener('click', function(){
-        const user = username.value.trim();
-        const pass = pwd.value;
-        if (!user || !pass){
-          alert('Iltimos, foydalanuvchi nomi va parolni kiriting.');
-          return;
-        }
-        // Demo: sahifada hech narsa yuborilmaydi, faqat vizual tasdiq
-        loginBtn.textContent = 'Logging in...';
-        loginBtn.disabled = true;
-        setTimeout(()=> {
-          alert('Bu demo sahifa — asl tizimga ulanish yo‘q.\nFoydalanuvchi: '+user);
-          loginBtn.textContent = 'Log in';
-          loginBtn.disabled = false;
-        }, 900);
-      });
+    if (isHidden) {
+      // OPEN EYE ICON
+      eyeIcon.innerHTML = `
+        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+        <circle cx="12" cy="12" r="3"/>
+      `;
+      toggle.title = "Hide password";
+    } else {
+      // CLOSED EYE ICON
+      eyeIcon.innerHTML = `
+        <path d="M17.94 17.94 6.06 6.06"/>
+        <path d="M10.58 10.58a2 2 0 1 0 2.83 2.83"/>
+        <path d="M9.88 4.24c.7-.15 1.43-.24 2.12-.24 5 0 9.27 3 11 7-0.73 1.86-1.98 3.47-3.54 4.73"/>
+        <path d="M6.06 6.06A11.94 11.94 0 0 0 1 11c1.73 4 6 7 11 7 1.7 0 3.34-.27 4.88-.76"/>
+      `;
+      toggle.title = "Show password";
+    }
+  });
+  // ------------------------------------------------------
 
-      fbBtn.addEventListener('click', function(){
-        alert('Facebook orqali kirish demo uchun ishlamaydi.');
-      });
+  loginBtn.addEventListener('click', function(){
+    const user = username.value.trim();
+    const pass = pwd.value;
+    if (!user || !pass){
+      alert('Iltimos, foydalanuvchi nomi va parolni kiriting.');
+      return;
+    }
+    loginBtn.textContent = 'Logging in...';
+    loginBtn.disabled = true;
+    setTimeout(()=> {
+      alert('Bu demo sahifa — asl tizimga ulanish yo‘q.\nFoydalanuvchi: '+user);
+      loginBtn.textContent = 'Log in';
+      loginBtn.disabled = false;
+    }, 900);
+  });
 
-      // A11y: Enter tugmasini qulay qilish
-      [username, pwd].forEach(el=>{
-        el.addEventListener('keydown', e=>{
-          if (e.key === 'Enter') loginBtn.click();
-        });
-      });
+  fbBtn.addEventListener('click', function(){
+    alert('Facebook orqali kirish demo uchun ishlamaydi.');
+  });
 
-    })();
+  [username, pwd].forEach(el=>{
+    el.addEventListener('keydown', e=>{
+      if (e.key === 'Enter') loginBtn.click();
+    });
+  });
+
+})();
+
   </script>
 </body>
 </html>
