@@ -68,3 +68,17 @@ class SettingsView(View):
     def get(self, request):
         profile = request.user
         return render(request, 'users/settings.html', {'profile': profile})
+
+
+
+class SearchView(View):
+    def get(self,request):
+        profile = request.user
+        return render(request, 'users/search.html', {'profile':profile})
+    
+
+
+class MesagesView(View):
+    def get(self,request):
+        profile = request.user
+        return render(request, 'users/mesages.html', {'profile':profile})

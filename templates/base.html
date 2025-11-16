@@ -19,6 +19,8 @@
 <body>
   <div id="app">
     <nav class="sidebar">
+
+
       <div class="sidebar-logo">
         <svg class="instagram-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -48,7 +50,7 @@
           </a>
         </li>
 <li class="menu-item">
-  <a href="#" class="menu-link">
+  <a href="{% url 'users:mesages' %}" class="menu-link">
     <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M22 2L11 13M22 2l-7 20-3-10-10-3 20-7z"/>
     </svg>
@@ -57,8 +59,11 @@
   </a>
 </li>
 
+
+
+
         <li class="menu-item">
-          <a href="#" class="menu-link">
+          <a href="{% url 'users:search' %}" class="menu-link" id="sidebarSearchBtn">
             <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.35-4.35"></path>
@@ -170,6 +175,10 @@
   </div>
   </nav>
 
+
+
+
+
   <main class="main-content">
     {% block content %}
 
@@ -193,6 +202,8 @@
         item.classList.add('active');
       });
     });
+
+
 
   </script>
 </body>

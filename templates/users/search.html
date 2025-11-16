@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Search UI Clone</title>
+    <style>
+        /* Umumiy uslublar va fon */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            /* Ekran bo'ylab o'rtaga joylash uchun */
+            /* align-items: flex-start; */
+            /* padding-top: 20px; */
+            height: 100vh;
+        }
+
+        /* Asosiy konteyner */
+        .search-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: #000;
+            padding: 10px 0;
+            box-sizing: border-box;
+        }
+
+        /* Qidiruv sarlavhasi */
+        .header {
+            padding: 0 15px 15px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Qidiruv maydoni qismi (Input va X tugmasi) */
+        .search-box-wrapper {
+            padding: 0 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input-group {
+            position: relative;
+            background-color: #262626; /* Qidiruv fon rangi */
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+        }
+
+        /* Qidiruv maydonchasi */
+        .search-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: #fff;
+            font-size: 1em;
+            padding: 0;
+            outline: none; /* Fokusda ko'k ramkani olib tashlash */
+        }
+
+        /* Joy tutuvchi (Placeholder) uslubi */
+        .search-input::placeholder {
+            color: #8e8e8e;
+        }
+
+        /* Tozalash tugmasi (X) */
+        .clear-button {
+            background: #606060;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            text-align: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 10px;
+            display: none; /* Matn bo'lmasa yashirish */
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .clear-button:hover {
+            opacity: 1;
+        }
+
+        /* Yaqinda qismi */
+        .recent-section {
+            padding: 0 15px;
+        }
+
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .recent-title {
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .clear-all-button {
+            color: #0095f6; /* Moviy rang */
+            font-size: 0.9em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Ro'yxat elementlari */
+        .recent-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-pic {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #363636; /* Rasm uchun joy tutuvchi rang */
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* Ba'zi profillarda yopiq profil yoki belgi bo'lishi mumkin */
+        .icon-placeholder {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #363636;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        .icon-placeholder.magnifying-glass {
+            background-color: transparent;
+            border: 1px solid #363636;
+        }
+
+        .user-names {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .username {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+        }
+
+        .fullname {
+            font-size: 0.8em;
+            color: #a8a8a8;
+        }
+        
+        .verified-badge {
+            margin-left: 5px;
+            color: #3897f0; /* Moviy tasdiqlash belgisi */
+            font-size: 0.8em;
+        }
+
+        /* Ro'yxatdan o'chirish tugmasi */
+        .remove-recent-button {
+            background: none;
+            border: none;
+            color: #a8a8a8;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="search-container">
+    <div class="header">Search</div>
+
+    <div class="search-box-wrapper">
+        <div class="search-input-group">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search">
+            <button id="clearButton" class="clear-button">×</button>
+        </div>
+    </div>
+
+    <div class="recent-section">
+        <div class="recent-header">
+            <span class="recent-title">Recent</span>
+            <span class="clear-all-button" onclick="clearAllRecent()">Clear all</span>
+        </div>
+
+        <ul class="recent-list" id="recentList">
+            </ul>
+    </div>
+</div>
+
+<script>
+    // --- JavaScript ---
+
+    const searchInput = document.getElementById('searchInput');
+    const clearButton = document.getElementById('clearButton');
+    const recentList = document.getElementById('recentList');
+
+    // 1. Qidiruv maydoni va 'X' tugmasi funksiyasi
+    
+    // Har safar kiritish maydonidagi matn o'zgarganda ishlaydi
+    searchInput.addEventListener('input', function() {
+        // Agar matn mavjud bo'lsa, "X" tugmasini ko'rsatish, aks holda yashirish
+        if (searchInput.value.length > 0) {
+            clearButton.style.display = 'block';
+        } else {
+            clearButton.style.display = 'none';
+        }
+    });
+
+    // "X" tugmasi bosilganda matnni tozalash funksiyasi
+    clearButton.addEventListener('click', function() {
+        searchInput.value = ''; // Kiritish maydonini tozalash
+        clearButton.style.display = 'none'; // "X" tugmasini yashirish
+        searchInput.focus(); // Foydalanuvchiga yana yozishni boshlashi uchun fokusni qaytarish
+    });
+
+    // 2. Yaqinda qidirilganlar ro'yxati funksiyasi
+
+    // Ro'yxat uchun ma'lumotlar (Sizning rasmingizdan olingan misollar)
+    const recentSearches = [
+        { type: 'bot', username: 'savedinstabot_', fullname: 'Saved Insta Bot - Telegram bot', pic: 'tg.png' },
+        { type: 'profile', username: 'telefonchi_oka_', fullname: '📱', pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'profile', username: 'damonnxtvd', fullname: '', pic: 'default.png' },
+        { type: 'profile', username: 'damon.damn_', fullname: 'Damon Salvatore', pic: 'default.png' },
+        { type: 'profile', username: 'icon_supermodel', fullname: 'Icon Supermodel | Francisco CHICO fanpag', pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
+    ];
+
+    // Ro'yxatni HTML ga chizish funksiyasi
+    function renderRecentList(list) {
+        recentList.innerHTML = ''; // Ro'yxatni tozalash
+
+        list.forEach((item, index) => {
+            const listItem = document.createElement('li');
+            listItem.className = 'recent-item';
+            listItem.setAttribute('data-index', index); // O'chirish uchun indeks
+
+            let profileHtml;
+            if (item.icon && item.isSearch) {
+                // Faqat _asalka kabi qidiruv ikonkasiga ega element
+                profileHtml = `
+                    <div class="user-info">
+                        <div class="icon-placeholder magnifying-glass">${item.icon}</div>
+                        <div class="user-names">
+                            <span class="username">${item.username}</span>
+                        </div>
+                    </div>
+                `;
+            } else if (item.isGucci) {
+                 // Gucci kabi logotipli maxsus element
+                profileHtml = `
+                    <div class="user-info">
+                        <img src="${item.pic}" class="profile-pic" alt="${item.username}" style="border-radius: 10px;">
+                        <div class="user-names">
+                            <span class="username">${item.username} ${item.isVerified ? '<span class="verified-badge">✔</span>' : ''}</span>
+                            <span class="fullname">${item.fullname}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            else {
+                // Oddiy profil va botlar
+                profileHtml = `
+                    <div class="user-info">
+                        <img src="${item.pic}" class="profile-pic" alt="${item.username}">
+                        <div class="user-names">
+                            <span class="username">${item.username} ${item.isVerified ? '<span class="verified-badge">✔</span>' : ''}</span>
+                            <span class="fullname">${item.fullname}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+
+            const removeButton = `
+                <button class="remove-recent-button" onclick="removeRecentItem(${index})">×</button>
+            `;
+
+            listItem.innerHTML = profileHtml + removeButton;
+            recentList.appendChild(listItem);
+        });
+    }
+
+    // Ro'yxatdan bitta elementni o'chirish funksiyasi
+    function removeRecentItem(index) {
+        // HTML elementini o'chirish
+        const itemToRemove = document.querySelector(`.recent-item[data-index="${index}"]`);
+        if (itemToRemove) {
+            itemToRemove.remove();
+        }
+
+        // Haqiqiy ro'yxatdan o'chirish (Agar ma'lumotlar bazasi mavjud bo'lsa, bu yerda o'chirish so'rovi ketadi)
+        // Hozircha bu qism renderRecentList() funksiyasini qayta chaqirmaydi,
+        // chunki bu oddiy UI kloni. Haqiqiy ilovada bu ma'lumotlar bazasi bilan ishlaydi.
+        
+        console.log(`Element ${index} ro'yxatdan o'chirildi.`);
+        
+        // Agar haqiqiy o'chirish kerak bo'lsa:
+        // recentSearches.splice(index, 1);
+        // renderRecentList(recentSearches);
+    }
+
+    // Barcha elementlarni tozalash funksiyasi
+    function clearAllRecent() {
+        if (confirm("Haqiqatan ham barcha yaqindagi qidiruvlarni tozalashni xohlaysizmi?")) {
+            recentList.innerHTML = ''; // HTML dan barcha elementlarni o'chirish
+            // Haqiqiy ilovada: ma'lumotlar bazasidan barcha ma'lumotlarni o'chirish so'rovi
+            // recentSearches.length = 0;
+            console.log("Barcha yaqindagi qidiruvlar tozalandi.");
+        }
+    }
+
+    // Sahifa yuklanganda ro'yxatni chizish
+    document.addEventListener('DOMContentLoaded', () => {
+        renderRecentList(recentSearches);
+    });
+</script>
+
+</body>
+</html>
