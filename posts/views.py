@@ -4,7 +4,9 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 import json
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import InstagramPostCreateForm
 
 
 class PostListView(ListView):
@@ -116,3 +118,31 @@ def toggle_like(request, pk):
         'liked': liked, # True (qo'shildi) yoki False (olib tashlandi)
         'new_count': new_like_count
     })
+
+
+
+
+# Create Post
+
+@login_required 
+def post_create(request):
+    if request.method == 'POST':
+        # YANGI FORMA KLASSIDAN FOYDALANAMIZ
+        form = InstagramPostCreateForm(request.POST, request.FILES) 
+        
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            
+            # Avtomatik ravishda hozirgi foydalanuvchini (muallifni) o'rnatamiz
+            new_post.author = request.user
+            
+            new_post.save()
+            
+            return redirect('post_list') 
+    else:
+        # YANGI FORMA KLASSIDAN FOYDALANAMIZ
+        form = InstagramPostCreateForm()
+    
+    return render(request, 'posts/post_create.html', {'form': form})
+
+# ... (qolgan view'lar: post_list, post_detail, toggle_like, add_comment) ...
