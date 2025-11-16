@@ -1,175 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block title %}Instagram Profile Update{% endblock %}
+{% block content %}
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #fafafa;
+        margin: 0;
+        padding: 40px 0;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Profile Update</title>
+    .profile-container {
+        width: 100%;
+        max-width: 650px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 30px 40px;
+        border: 1px solid #dbdbdb;
+        border-radius: 10px;
+    }
 
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #fafafa;
-            margin: 0;
-            padding: 40px 0;
-        }
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
 
-        .profile-container {
-            width: 100%;
-            max-width: 650px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px 40px;
-            border: 1px solid #dbdbdb;
-            border-radius: 10px;
-        }
+    .profile-header img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #dbdbdb;
+    }
 
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+    .profile-header-info {
+        margin-left: 20px;
+    }
 
-        .profile-header img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid #dbdbdb;
-        }
+    .profile-header-info h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
 
-        .profile-header-info {
-            margin-left: 20px;
-        }
+    .change-photo-btn {
+        margin-top: 7px;
+        background: #0095f6;
+        color: white;
+        padding: 5px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+    }
 
-        .profile-header-info h3 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-        }
+    .form-group {
+        margin-bottom: 25px;
+    }
 
-        .change-photo-btn {
-            margin-top: 7px;
-            background: #0095f6;
-            color: white;
-            padding: 5px 12px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-        }
+    label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 8px;
+    }
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+    .profile-form input,
+    .profile-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #dbdbdb;
+        background: #fafafa;
+        border-radius: 6px;
+        font-size: 14px;
+    }
 
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #262626;
-            margin-bottom: 8px;
-        }
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: #0095f6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 14px;
+    }
 
-        .profile-form input,
-        .profile-form textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #dbdbdb;
-            background: #fafafa;
-            border-radius: 6px;
-            font-size: 14px;
-        }
+    .cancel-btn {
+        display: block;
+        text-align: center;
+        color: #0095f6;
+        text-decoration: none;
+        font-size: 14px;
+        margin-top: 14px;
+    }
+</style>
+<div class="profile-container">
+    <!-- Profile Header (image + username + change photo button) -->
+    <div class="profile-header">
+        <img id="profile-picture" src="{{ profile.profile_picture.url }}" alt="Profile picture">
 
-        .submit-btn {
-            width: 100%;
-            padding: 12px;
-            background: #0095f6;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        .cancel-btn {
-            display: block;
-            text-align: center;
-            color: #0095f6;
-            text-decoration: none;
-            font-size: 14px;
-            margin-top: 14px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="profile-container">
-
-        <!-- Profile Header (image + username + change photo button) -->
-        <div class="profile-header">
-            <img src="{{ profile.profile_picture.url }}" alt="Profile picture">
-
-            <div class="profile-header-info">
-                <h3>{{ user.username }}</h3>
-
-                <!-- Hidden file input -->
-                <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
-
-                <!-- Styled button -->
-                <button type="button" class="change-photo-btn"
-                    onclick="document.getElementById('profile-pic-input').click();">
-                    Change photo
-                </button>
-            </div>
-
+        <div class="profile-header-info">
+            <h3>{{ user.username }}</h3>
         </div>
-
-        <form action="" method="post" enctype="multipart/form-data" class="profile-form">
-            {% csrf_token %}
-
-            <div class="form-group">
-                <label for="id_username">Username</label>
-                {{ form.username }}
-            </div>
-
-            <div class="form-group">
-                <label for="id_bio">Bio</label>
-                {{ form.bio }}
-            </div>
-<!-- 
-            <div class="form-group">
-                <label for="id_profile_pic">Profile Picture</label>
-                <input type="file" name="profile_picture" id="id_profile_pic" accept="image/*">
-            </div> -->
-
-
-            <div class="form-group">
-                <label for="id_first_name">First name</label>
-                {{ form.first_name }}
-            </div>
-
-            <div class="form-group">
-                <label for="id_last_name">Last name</label>
-                {{ form.last_name }}
-            </div>
-
-            <div class="form-group">
-                <label for="id_email">Email</label>
-                {{ form.email }}
-            </div>
-
-            <button type="submit" class="submit-btn">Save Changes</button>
-
-            <a href="{% url 'users:profile' %}" class="cancel-btn">Cancel</a>
-        </form>
-
     </div>
 
-</body>
+    <form action="" method="post" enctype="multipart/form-data" class="profile-form">
+        {% csrf_token %}
 
-</html>
+        <div class="form-group">
+            <label for="id_username">Username</label>
+            {{ form.username }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_bio">Bio</label>
+            {{ form.bio }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_profile_pic">Profile Picture</label>
+            <input type="file" name="profile_picture" id="id_profile_pic" accept="image/*">
+        </div>
+
+
+        <div class="form-group">
+            <label for="id_first_name">First name</label>
+            {{ form.first_name }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_last_name">Last name</label>
+            {{ form.last_name }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">Email</label>
+            {{ form.email }}
+        </div>
+
+        <button type="submit" class="submit-btn">Save Changes</button>
+
+        <a href="{% url 'users:profile' %}" class="cancel-btn">Cancel</a>
+    </form>
+
+</div>
+
+{% endblock %}
