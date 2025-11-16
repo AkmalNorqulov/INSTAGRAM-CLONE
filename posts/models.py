@@ -87,3 +87,74 @@ class InstagramPost(models.Model):
         verbose_name = "Instagram Posti"
         verbose_name_plural = "Instagram Postlari"
         ordering = ['-created_at'] # Eng so'nggi postlar birinchi ko'rinadi
+
+
+
+class Comment(models.Model):
+    """
+    Postlarga tegishli sharhlarni ifodalovchi model.
+    """
+    # Qaysi postga tegishli
+    post = models.ForeignKey(
+        InstagramPost,
+        on_delete=models.CASCADE,
+        related_name='comments', # post.comments.all() orqali sharhlarga erishish uchun
+        verbose_name="Post"
+    )
+    
+    # Kim sharh qoldirgan
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name="Sharh Muallifi"
+    )
+    
+    # Sharh matni
+    text = models.TextField(
+        max_length=500,
+        verbose_name="Sharh Matni"
+    )
+    
+    # Yaratilgan sana
+    created_at = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Yaratilgan Sana"
+    )
+
+    def __str__(self):
+        return f"{self.author.username}: {self.text[:30]}"
+
+    class Meta:
+        verbose_name = "Sharh"
+        verbose_name_plural = "Sharhlar"
+        ordering = ['created_at']
+
+class Like(models.Model):
+    """
+    Postlarga qoldirilgan yoqtirishlarni ifodalovchi model.
+    """
+    post = models.ForeignKey(
+        InstagramPost,
+        on_delete=models.CASCADE,
+        related_name='likes', # post.likes.count() orqali like soniga erishish uchun
+        verbose_name="Post"
+    )
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='likes_given',
+        verbose_name="Yoqtirgan foydalanuvchi"
+    )
+    
+    created_at = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Yaratilgan Sana"
+    )
+
+    class Meta:
+        verbose_name = "Yoqtirish (Like)"
+        verbose_name_plural = "Yoqtirishlar (Likes)"
+        # Har bir foydalanuvchi bitta postga faqat bir marta like bosa olishini ta'minlaydi
+        unique_together = ('post', 'user')

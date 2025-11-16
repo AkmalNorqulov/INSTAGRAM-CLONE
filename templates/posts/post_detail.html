@@ -1,0 +1,393 @@
+{% load post_filters %} 
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.author.username }} - Post Detali</title>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fafafa; 
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .detail-layout {
+            display: flex;
+            max-width: 935px;
+            max-height: 95vh;
+            margin: 20px auto;
+            border: 1px solid #dbdbdb;
+            background-color: #fff;
+            border-radius: 3px;
+        }
+        
+        .media-column {
+            flex: 2; 
+            background-color: #000; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 500px;
+        }
+        .media-column img {
+            max-width: 100%;
+            max-height: 100%; 
+            object-fit: contain; 
+        }
+        
+        .info-column {
+            flex: 1; 
+            min-width: 335px;
+            max-width: 335px; 
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #dbdbdb;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #efefef;
+            font-size: 14px;
+        }
+        .post-header-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #efefef;
+            margin-right: 14px;
+        }
+        .post-header-username {
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+        }
+        
+        .comments-section {
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 0 16px;
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .comments-section::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .comment-item { 
+            display: flex; 
+            margin-bottom: 10px; 
+            padding-top: 5px;
+            font-size: 14px; 
+        }
+        .comment-text { 
+            line-height: 18px; 
+            margin-left: 10px; 
+        }
+        .comment-username { 
+            font-weight: 600; 
+            margin-right: 6px; 
+        }
+        .caption-text-area { 
+            padding-top: 16px;
+        }
+        
+        .post-footer {
+            border-top: 1px solid #efefef;
+            padding: 0;
+        }
+        .post-actions {
+            padding: 4px 16px;
+        }
+        
+        .post-actions-icons { 
+            display: flex; 
+            align-items: center; 
+            padding: 8px 0; 
+        }
+        .action-icon-svg { 
+            font-size: 26px; 
+            line-height: 1; 
+            margin-right: 15px; 
+            cursor: pointer; 
+            color: #262626; 
+            transition: color 0.1s;
+        }
+        .action-icon-svg:hover {
+            opacity: 0.7;
+        }
+        .post-likes, .post-timestamp { 
+            padding: 0 16px 8px 16px; 
+            font-size: 14px; 
+            font-weight: 600; 
+        }
+        .post-timestamp { 
+            font-weight: 400; 
+            color: #8e8e8e; 
+            font-size: 10px; 
+            padding-top: 0; 
+        }
+
+        .comment-input-area { 
+            border-top: 1px solid #efefef; 
+            padding: 10px 16px; 
+            display: flex; 
+            align-items: center; 
+        }
+        .comment-input-area input { 
+            flex-grow: 1; 
+            border: none; 
+            padding: 5px 10px; 
+            font-size: 14px; 
+            outline: none; 
+        }
+        .comment-input-area button { 
+            color: #0095f6; 
+            font-weight: 600; 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            padding-right: 0; 
+            opacity: 0.5; 
+            transition: opacity 0.2s; 
+        }
+        .comment-input-area button:disabled { 
+            opacity: 0.3; 
+            cursor: default;
+        }
+        .emoji-icon { 
+            font-size: 20px; 
+            cursor: pointer; 
+            margin-right: 8px; 
+        }
+        
+        .hashtag { 
+            color: #00376b; 
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 4px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="detail-layout">
+
+        <div class="media-column">
+            <img src="{{ post.image.url }}" alt="{{ post.caption|truncatechars:30 }}">
+        </div>
+
+        <div class="info-column">
+
+            <header class="post-header">
+                <div class="post-header-avatar"></div> 
+                <a href="#" class="post-header-username">{{ post.author.username }}</a>
+            </header>
+            
+            <section class="comments-section" id="comments-list">
+                
+                <div class="comment-item caption-text-area">
+                    <div class="post-header-avatar" style="width: 24px; height: 24px;"></div>
+                    <div class="comment-text">
+                        <span class="comment-username">{{ post.author.username }}</span> 
+                        {{ post.caption }}
+                        
+                        {% if post.hashtags %}
+                            {% for tag in post.hashtags|split_string:','|slice:":5" %}
+                                <a href="#" class="hashtag">#{{ tag|remove_spaces }}</a>
+                            {% endfor %}
+                        {% endif %}
+                        <div style="color: #8e8e8e; font-size: 10px; margin-top: 5px;">
+                            {{ post.created_at|date:"F j" }}
+                        </div>
+                    </div>
+                </div>
+
+                {% for comment in post.comments.all %}
+                    <div class="comment-item">
+                        <div class="post-header-avatar" style="width: 24px; height: 24px;"></div>
+                        <div class="comment-text">
+                            <span class="comment-username">{{ comment.author.username }}</span> 
+                            {{ comment.text }}
+                        </div>
+                    </div>
+                {% empty %}
+                {% endfor %}
+
+            </section>
+
+            <div class="post-footer">
+                
+                <section class="post-actions">
+                    <div class="post-actions-icons">
+                        
+                        {% is_post_liked post as is_liked %}
+                        {% if user.is_authenticated %}
+                            <span 
+                                class="action-icon-svg like-toggle" 
+                                id="like-icon-{{ post.pk }}"
+                                data-post-pk="{{ post.pk }}"
+                                style="color: {% if is_liked %}#ed4956{% else %}#262626{% endif %};" 
+                                title="Like"
+                            >&#x2764;</span>
+                        {% else %}
+                            <span class="action-icon-svg" title="Like">&#x2764;</span>
+                        {% endif %}
+                        
+
+                        <span class="action-icon-svg" title="Comment">&#x1F4AC;</span>
+                        </div>
+                </section>
+
+                <div class="post-likes" id="like-count-display">
+                    {{ post.likes.count|default:0 }} likes
+                </div>
+                
+                {% if comment_count > 0 %}
+                    <div class="post-likes" style="font-weight: 400; color: #8e8e8e;">
+                        Barcha {{ comment_count }} ta sharhni ko'rish
+                    </div>
+                {% endif %}
+                
+                <div class="post-timestamp">
+                    {{ post.created_at|date:"YIL F J" }}
+                </div>
+            
+                {% if user.is_authenticated %}
+                <form class="comment-input-area" id="comment-form">
+                    <span class="emoji-icon" title="Emoji">&#x1F60A;</span> 
+                    <input type="text" placeholder="Sharh qoldirish..." name="comment_text" id="comment-text-input" required>
+                    <button type="submit" id="post-comment-btn" disabled>Post</button>
+                </form>
+                {% else %}
+                <div class="comment-input-area" style="text-align: center; color: #8e8e8e;">
+                    Sharh qoldirish uchun <a href="{% url 'login' %}" style="color: #0095f6;">kirish</a> talab qilinadi.
+                </div>
+                {% endif %}
+                
+            </div> 
+
+        </div> 
+        
+    </div> 
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        
+        const input = document.getElementById('comment-text-input');
+        const button = document.getElementById('post-comment-btn');
+        const commentsList = document.getElementById('comments-list');
+        const commentForm = document.getElementById('comment-form');
+        const likeIcon = document.getElementById('like-icon-{{ post.pk }}');
+        const likeCountDisplay = document.getElementById('like-count-display');
+        const postPk = {{ post.pk }}; 
+
+        // 1. SHARH QO'SHISH LOGIKASI
+        if (input && button) {
+            input.addEventListener('input', () => {
+                button.disabled = input.value.trim().length === 0;
+            });
+        }
+
+        if (commentForm) {
+            commentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = input.value.trim();
+                
+                if (text.length > 0) {
+                    
+                    fetch(`{% url 'add_comment' post.pk %}`, { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken 
+                        },
+                        body: JSON.stringify({ text: text })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const newCommentHtml = `
+                                <div class="comment-item">
+                                    <div class="post-header-avatar" style="width: 24px; height: 24px;"></div>
+                                    <div class="comment-text">
+                                        <span class="comment-username">${data.comment.author_username}</span> 
+                                        ${data.comment.text}
+                                    </div>
+                                </div>
+                            `;
+                            
+                            commentsList.insertAdjacentHTML('beforeend', newCommentHtml);
+                            input.value = '';
+                            button.disabled = true;
+                            commentsList.scrollTop = commentsList.scrollHeight; 
+
+                        } else {
+                            alert('Sharh qo\'shishda xato: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Sharh AJAX xato:', error);
+                        alert('Server bilan bog\'lanishda xato yuz berdi.');
+                    });
+                }
+            });
+        }
+        
+        // 2. LIKE QO'SHISH LOGIKASI
+        if (likeIcon && likeCountDisplay) {
+            likeIcon.addEventListener('click', () => {
+                
+                fetch(`{% url 'toggle_like' post.pk %}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken 
+                    },
+                    body: JSON.stringify({}) 
+                })
+                .then(response => {
+                    if (response.status === 401) {
+                        alert('Like bosish uchun tizimga kiring!');
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        // Baza holati sinxronlash uchun sahifani yangilash
+                        window.location.reload(); 
+                    } else if (data && data.error) {
+                         alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Like AJAX xato:', error);
+                    alert('Server bilan bog\'lanishda xato yuz berdi.');
+                });
+            });
+        }
+    </script>
+    
+</body>
+</html>

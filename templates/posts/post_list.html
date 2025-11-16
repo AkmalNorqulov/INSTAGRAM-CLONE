@@ -1,0 +1,280 @@
+{% load post_filters %} 
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Instagram Clone - Postlar Lentasi</title>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fafafa; 
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .feed-container {
+            max-width: 470px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .instagram-post {
+            background-color: #fff;
+            border: 1px solid #dbdbdb;
+            margin-bottom: 24px;
+            border-radius: 3px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+        }
+
+        .post-header-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #eee;
+            margin-right: 14px;
+        }
+
+        .post-header-username {
+            font-weight: 600;
+            font-size: 14px;
+            color: #262626;
+            text-decoration: none;
+        }
+        
+        .post-media {
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            background-color: #eee;
+        }
+
+        .post-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        .post-actions {
+            padding: 4px 16px;
+        }
+        
+        .post-actions-icons {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+        
+        .action-icon-svg { 
+            font-size: 26px; 
+            line-height: 1; 
+            margin-right: 15px; 
+            cursor: pointer; 
+            color: #262626; 
+            transition: color 0.1s;
+        }
+        
+        .action-icon-svg:hover {
+            opacity: 0.7;
+        }
+        
+        .post-info {
+            /* Post info endi faqat Like soni va Sharhlarni o'z ichiga oladi */
+            padding: 0 16px 12px 16px;
+            font-size: 14px;
+        }
+
+        .post-likes {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .post-comments-count { /* Sharhlar soni stili */
+            font-weight: 400; 
+            color: #8e8e8e; 
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        
+        /* Caption va hashtag'lar endi post-info ichida */
+        .post-caption-block {
+             margin-top: 8px; /* Like/Comment count ostida joylashadi */
+        }
+        
+        .post-caption-text {
+            line-height: 18px;
+            margin-top: 5px;
+            white-space: pre-line; 
+        }
+        
+        .post-caption-username {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .hashtag {
+            color: #00376b; 
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="feed-container">
+
+        {% for post in posts %}
+            
+            {% is_post_liked post as is_liked %} 
+
+            <article class="instagram-post">
+                
+                <header class="post-header">
+                    <div class="post-header-avatar"></div> 
+                    <div>
+                        <a href="#" class="post-header-username">{{ post.author.username }}</a>
+                    </div>
+                </header>
+
+                <div class="post-media">
+                    <a href="{% url 'post_detail' post.pk %}">
+                        <img src="{{ post.image.url }}" alt="{{ post.caption|truncatechars:30 }}">
+                    </a>
+                </div>
+
+                <section class="post-actions">
+                    <div class="post-actions-icons">
+                        
+                        {% if user.is_authenticated %}
+                            <span 
+                                class="action-icon-svg like-toggle" 
+                                id="like-icon-{{ post.pk }}"
+                                data-post-pk="{{ post.pk }}"
+                                style="color: {% if is_liked %}#ed4956{% else %}#262626{% endif %};" 
+                                title="Like"
+                            >&#x2764;</span> 
+                        {% else %}
+                            <span class="action-icon-svg" title="Like">&#x2764;</span>
+                        {% endif %}
+
+
+                        <a href="{% url 'post_detail' post.pk %}" style="text-decoration: none;">
+                            <span class="action-icon-svg" title="Comment">&#x1F4AC;</span>
+                        </a>
+                    </div>
+                </section>
+
+                <div class="post-info">
+                    
+                    <div class="post-likes" id="like-count-display-{{ post.pk }}">
+                        {% if post.likes.count > 0 %}
+                            {{ post.likes.count }} likes
+                        {% else %}
+                            0 likes
+                        {% endif %}
+                    </div> 
+                    
+                    {% if post.comments.count > 0 %}
+                        <div class="post-comments-count">
+                            <a href="{% url 'post_detail' post.pk %}" style="color: inherit; text-decoration: none;">
+                                Barcha {{ post.comments.count }} ta sharhni ko'rish
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="post-caption-block">
+                        <span class="post-caption-username">{{ post.author.username }}</span> 
+                        {{ post.caption|safe }}
+
+                        {% if post.hashtags %}
+                            {% for tag in post.hashtags|split_string:','|slice:":5" %}
+                                <a href="#" class="hashtag">#{{ tag|remove_spaces }}</a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    </div>
+
+            </article>
+        {% empty %}
+            <p>Hozircha lentada hech qanday post mavjud emas.</p>
+        {% endfor %}
+
+
+    </div>
+    
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        
+        {% if user.is_authenticated %}
+            const likeToggleButtons = document.querySelectorAll('.like-toggle');
+
+            likeToggleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const postPk = button.dataset.postPk;
+                    const url = `/posts/${postPk}/like/`; 
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken 
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => {
+                        if (response.status === 401) {
+                            alert('Like bosish uchun tizimga kiring!');
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data && data.success) {
+                            const likeCountDisplay = document.getElementById(`like-count-display-${postPk}`);
+                            
+                            if (data.liked) {
+                                button.style.color = '#ed4956'; 
+                            } else {
+                                button.style.color = '#262626'; 
+                            }
+                            
+                            likeCountDisplay.innerText = `${data.new_count} likes`;
+                        } else if (data && data.error) {
+                             alert(data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Like AJAX xato:', error);
+                        alert('Server bilan bog\'lanishda xato yuz berdi.');
+                    });
+                });
+            });
+        {% endif %}
+
+    </script>
+
+</body>
+</html>

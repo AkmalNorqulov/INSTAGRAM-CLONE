@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="uz">
 
@@ -309,15 +308,15 @@
         left: 20px;
       }
     }
-
   </style>
 </head>
 
 <body>
   {% if form.non_field_errors %}
-  <div role="alert" style="background: rgba(255, 75, 75, 0.06); border: 1px solid rgba(255, 75, 75, 0.18); color: #ffb3b3; padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 14px;">
+  <div role="alert"
+    style="background: rgba(255, 75, 75, 0.06); border: 1px solid rgba(255, 75, 75, 0.18); color: #ffb3b3; padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 14px;">
     {% for error in form.non_field_errors %}
-      <p style="margin: 0 0 8px 0; line-height: 1.3;">{{ error }}</p>
+    <p style="margin: 0 0 8px 0; line-height: 1.3;">{{ error }}</p>
     {% endfor %}
   </div>
   {% endif %}
@@ -371,7 +370,7 @@
           {{ form.username }}
           <div style="position:relative">
             {{ form.password }}
-<button type="button" id="togglePwd" style="
+            <button type="button" id="togglePwd" style="
     position:absolute;
     right:8px;
     top:50%;
@@ -385,33 +384,22 @@
     justify-content:center;
     margin-right: 3%;
     color: white;
-"> 
- <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" 
-     fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M2 12c2-4 6-7 10-7s8 3 10 7"/>
-    <path d="M2 12c2 4 6 7 10 7s8-3 10-7"/>
-    <line x1="4" y1="4" x2="20" y2="20"/>
-</svg>
+">
+              <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12c2-4 6-7 10-7s8 3 10 7" />
+                <path d="M2 12c2 4 6 7 10 7s8-3 10-7" />
+                <line x1="4" y1="4" x2="20" y2="20" />
+              </svg>
 
 
 
-</button>
+            </button>
 
 
           </div>
 
           <button id="loginBtn" class="btn">Log in</button>
-
-          <div class="or-line" aria-hidden="true"><span>OR</span></div>
-
-          <div class="fb" id="fbBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:6px">
-              <path
-                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.12 8.44 9.88v-6.99H8.9v-2.9h1.54V9.41c0-1.52.9-2.36 2.28-2.36.66 0 1.36.12 1.36.12v1.5h-.78c-.77 0-1.01.48-1.01.97v1.16h1.72l-.27 2.9h-1.45V22C18.34 21.12 22 16.99 22 12z"
-                fill="#2b73e6" />
-            </svg>
-            Log in with Facebook
-          </div>
 
           <div class="forgot">Forgot password?</div>
         </form>
@@ -421,79 +409,71 @@
         Don't have an account? <a href="{% url 'users:register' %}" style="color:#a0c4ff; text-decoration:none">Sign
           up</a>
       </div>
-
-      <div class="links" aria-hidden="true" style="margin-top:16px">
-        <span>Meta</span>
-        <span>About</span>
-        <span>Help</span>
-        <span>Terms</span>
-        <span>Privacy</span>
-      </div>
     </div>
   </div>
 
   <script>
- // JS: kichik funksiyalar - parolni ko'rsatish va forma validatsiyasi
-(function(){
-  const pwd = document.getElementById('id_password');
-  const toggle = document.getElementById('togglePwd');
-  const eyeIcon = document.getElementById('eyeIcon');
-  const loginBtn = document.getElementById('loginBtn');
-  const username = document.getElementById('username');
-  const fbBtn = document.getElementById('fbBtn');
+    // JS: kichik funksiyalar - parolni ko'rsatish va forma validatsiyasi
+    (function () {
+      const pwd = document.getElementById('id_password');
+      const toggle = document.getElementById('togglePwd');
+      const eyeIcon = document.getElementById('eyeIcon');
+      const loginBtn = document.getElementById('loginBtn');
+      const username = document.getElementById('username');
+      const fbBtn = document.getElementById('fbBtn');
 
-  // ---- YANGILANGAN QISM: KO‘Z IKONKASI + SHOW/HIDE ----
-  toggle.addEventListener('click', function(){
-    const isHidden = pwd.type === 'password';
-    pwd.type = isHidden ? 'text' : 'password';
+      // ---- YANGILANGAN QISM: KO‘Z IKONKASI + SHOW/HIDE ----
+      toggle.addEventListener('click', function () {
+        const isHidden = pwd.type === 'password';
+        pwd.type = isHidden ? 'text' : 'password';
 
-    if (isHidden) {
-      // OPEN EYE ICON
-      eyeIcon.innerHTML = `
+        if (isHidden) {
+          // OPEN EYE ICON
+          eyeIcon.innerHTML = `
         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
         <circle cx="12" cy="12" r="3"/>
       `;
-      toggle.title = "Hide password";
-    } else {
-      // CLOSED EYE ICON
-      eyeIcon.innerHTML = `
+          toggle.title = "Hide password";
+        } else {
+          // CLOSED EYE ICON
+          eyeIcon.innerHTML = `
         <path d="M17.94 17.94 6.06 6.06"/>
         <path d="M10.58 10.58a2 2 0 1 0 2.83 2.83"/>
         <path d="M9.88 4.24c.7-.15 1.43-.24 2.12-.24 5 0 9.27 3 11 7-0.73 1.86-1.98 3.47-3.54 4.73"/>
         <path d="M6.06 6.06A11.94 11.94 0 0 0 1 11c1.73 4 6 7 11 7 1.7 0 3.34-.27 4.88-.76"/>
       `;
-      toggle.title = "Show password";
-    }
-  });
-  // ------------------------------------------------------
+          toggle.title = "Show password";
+        }
+      });
+      // ------------------------------------------------------
 
-  loginBtn.addEventListener('click', function(){
-    const user = username.value.trim();
-    const pass = pwd.value;
-    if (!user || !pass){
-      alert('Iltimos, foydalanuvchi nomi va parolni kiriting.');
-      return;
-    }
-    loginBtn.textContent = 'Logging in...';
-    loginBtn.disabled = true;
-    setTimeout(()=> {
-      alert('Bu demo sahifa — asl tizimga ulanish yo‘q.\nFoydalanuvchi: '+user);
-      loginBtn.textContent = 'Log in';
-      loginBtn.disabled = false;
-    }, 900);
-  });
+      loginBtn.addEventListener('click', function () {
+        const user = username.value.trim();
+        const pass = pwd.value;
+        if (!user || !pass) {
+          alert('Iltimos, foydalanuvchi nomi va parolni kiriting.');
+          return;
+        }
+        loginBtn.textContent = 'Logging in...';
+        loginBtn.disabled = true;
+        setTimeout(() => {
+          alert('Bu demo sahifa — asl tizimga ulanish yo‘q.\nFoydalanuvchi: ' + user);
+          loginBtn.textContent = 'Log in';
+          loginBtn.disabled = false;
+        }, 900);
+      });
 
-  fbBtn.addEventListener('click', function(){
-    alert('Facebook orqali kirish demo uchun ishlamaydi.');
-  });
+      fbBtn.addEventListener('click', function () {
+        alert('Facebook orqali kirish demo uchun ishlamaydi.');
+      });
 
-  [username, pwd].forEach(el=>{
-    el.addEventListener('keydown', e=>{
-      if (e.key === 'Enter') loginBtn.click();
-    });
-  });
+      [username, pwd].forEach(el => {
+        el.addEventListener('keydown', e => {
+          if (e.key === 'Enter') loginBtn.click();
+        });
+      });
 
-})();
+    })();
 
   </script>
 </body>
