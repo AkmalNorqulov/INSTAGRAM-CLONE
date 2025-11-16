@@ -7,5 +7,5 @@ urlpatterns = [
     path('<int:pk>/', PostDetailView.as_view(), name='post_detail'),
     path('post_create/', post_create, name='post_create'),
     path('<int:pk>/comment/', add_comment, name='add_comment'),
-    path('<int:pk>/like/', toggle_like, name='toggle_like'),
+    path('posts/<int:pk>/like/', toggle_like, name='toggle_like'),
 ]

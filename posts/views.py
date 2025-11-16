@@ -7,9 +7,10 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import InstagramPostCreateForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class PostListView(ListView):
+class PostListView(LoginRequiredMixin,ListView):
     """
     Barcha InstagramPost ob'ektlarini ro'yxatini ko'rsatadi.
     Eng so'nggi postlar birinchi bo'lib ko'rinadi (modeldagi 'ordering' tufayli).
@@ -18,7 +19,7 @@ class PostListView(ListView):
     template_name = 'posts/post_list.html'  # Ishlatiladigan template nomi
     context_object_name = 'posts'  # Template ichida ishlatiladigan o'zgaruvchi nomi
     
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin,DetailView):
     model = InstagramPost
     template_name = 'posts/post_detail.html'
     context_object_name = 'post'
