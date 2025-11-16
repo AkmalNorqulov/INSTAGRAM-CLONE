@@ -3,6 +3,7 @@ from django.views import View
 from .models import UserProfile
 from .forms import CustomUserCreationForm, CustomUserLoginForm, UserProfileUpdateForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 
 class RegisterView(View):
@@ -25,7 +26,7 @@ class LoginView(View):
             return redirect('users:profile')
         return render(request, 'users/login.html', {'form': form})
     def post(self, request):
-        form = CustomUserLoginForm(request, request.POST)
+        form = CustomUserLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)

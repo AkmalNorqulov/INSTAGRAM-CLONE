@@ -1,6 +1,8 @@
 from django import forms
 from .models import UserProfile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate
+from django import forms
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -34,6 +36,27 @@ class CustomUserLoginForm(AuthenticationForm):
         self.fields['username'].widget.attrs['placeholder'] = 'Username'
         self.fields['password'].widget.attrs['placeholder'] = 'Password'
         self.fields['username'].widget.attrs['autofocus'] = True
+    
+    
+
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username and password:
+            user = authenticate(self.request, username=username, password=password)
+
+            if user is None:
+                raise forms.ValidationError(
+                    "Username or password is incorrect.",
+                    code="invalid_login"
+                )
+
+            # Store user so get_user() works
+            self.user_cache = user
+
+        return super().clean()
+
 
 
 class UserProfileUpdateForm(forms.ModelForm):
