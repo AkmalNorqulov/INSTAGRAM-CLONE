@@ -116,8 +116,17 @@
 
             <div class="profile-header-info">
                 <h3>{{ user.username }}</h3>
-                <button class="change-photo-btn">Change photo</button>
+
+                <!-- Hidden file input -->
+                <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
+
+                <!-- Styled button -->
+                <button type="button" class="change-photo-btn"
+                    onclick="document.getElementById('profile-pic-input').click();">
+                    Change photo
+                </button>
             </div>
+
         </div>
 
         <form action="" method="post" enctype="multipart/form-data" class="profile-form">
@@ -132,11 +141,12 @@
                 <label for="id_bio">Bio</label>
                 {{ form.bio }}
             </div>
-
+<!-- 
             <div class="form-group">
                 <label for="id_profile_pic">Profile Picture</label>
-                {{ form.profile_picture }}
-            </div>
+                <input type="file" name="profile_picture" id="id_profile_pic" accept="image/*">
+            </div> -->
+
 
             <div class="form-group">
                 <label for="id_first_name">First name</label>
