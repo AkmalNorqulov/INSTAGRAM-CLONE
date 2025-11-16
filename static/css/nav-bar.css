@@ -2,6 +2,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background-color: #000000;
+  color: #f2f2f2;
+  .menu-link:hover * {
+  background-color: transparent !important;
+}
+
 }
 
 :root {
@@ -22,6 +28,7 @@ body {
   margin: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+
 }
 /* 
 #app {
@@ -32,7 +39,7 @@ body {
 .sidebar {
   width: 245px;
   height: 100vh;
-  background-color: var(--bg-primary);
+  background-color: var(--text-primary);
   border-right: 1px solid var(--border-color);
   padding: 8px 12px;
   display: flex;
@@ -40,6 +47,7 @@ body {
   position: fixed;
   left: 0;
   top: 0;
+
 }
 
 .sidebar-logo {
@@ -67,20 +75,22 @@ body {
   align-items: center;
   padding: 12px;
   text-decoration: none;
-  color: var(--text-primary);
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   position: relative;
   border: none;
-  background: none;
-  width: 100%;
-  font-size: 16px;
-  font-family: inherit;
+
+  background-color: #000 !important;
+  transition: background-color 0.2s ease;
 }
 
 .menu-link:hover {
-  background-color: var(--bg-hover);
+  /* background-color: var(--text-primary); */
+  background-color:#737373;
+  border: 2px solid;
+  color:#737373 ;
+
 }
 
 .menu-item.active .menu-link {
