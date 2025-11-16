@@ -196,9 +196,11 @@
                     <p><strong>Email:</strong> {{ profile.email }}</p>
                 </div>
 
-<button class="update-btn" type="submit">
+<a href="{% url 'users:profile_update' %}">
+    <button class="update-btn" type="submit">
   Update Profile
 </button>
+</a>
 
             </div>
         </div>
