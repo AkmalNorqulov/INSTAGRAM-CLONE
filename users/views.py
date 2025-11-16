@@ -5,7 +5,6 @@ from .forms import CustomUserCreationForm, CustomUserLoginForm, UserProfileUpdat
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
-
 class RegisterView(View):
     def get(self, request):
         form = CustomUserCreationForm()
@@ -56,3 +55,16 @@ class ProfileUpdateView(View):
             form.save()
             return redirect('users:profile')
         return render(request, 'users/profile_update.html', {'form': form, 'profile': profile})
+    
+
+
+
+# class SettingsView(TemplateView):
+#     template_name = "users/settings.html"
+
+
+
+class SettingsView(View):
+    def get(self, request):
+        profile = request.user
+        return render(request, 'users/settings.html', {'profile': profile})

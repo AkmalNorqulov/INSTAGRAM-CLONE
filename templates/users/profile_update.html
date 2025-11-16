@@ -4,7 +4,7 @@
 <style>
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background: #fafafa;
+        background: #070707;
         margin: 0;
         padding: 40px 0;
     }
@@ -13,7 +13,7 @@
         width: 100%;
         max-width: 650px;
         margin: 0 auto;
-        background: #fff;
+        background: #000000;
         padding: 30px 40px;
         border: 1px solid #dbdbdb;
         border-radius: 10px;
@@ -30,7 +30,7 @@
         height: 80px;
         border-radius: 50%;
         object-fit: cover;
-        border: 1px solid #dbdbdb;
+        border: 1px solid #000000;
     }
 
     .profile-header-info {
@@ -72,7 +72,7 @@
         width: 100%;
         padding: 12px;
         border: 1px solid #dbdbdb;
-        background: #fafafa;
+        background: #000000;
         border-radius: 6px;
         font-size: 14px;
     }
@@ -98,6 +98,56 @@
         font-size: 14px;
         margin-top: 14px;
     }
+
+
+        /* 1. Asl inputni yashirish */
+.picture-small {
+    opacity: 0; 
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+    z-index: -1;
+    width: 100px;
+}
+
+/* 2. Tugmaning asosiy stillari (label) */
+.upload-button-small {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Ikonka va matn orasidagi masofa */
+    
+    cursor: pointer;
+    
+    /* Hajmni kichraytirish */
+    padding: 8px 18px; 
+    font-size: 0.9em; 
+    
+    border-radius: 25px; /* Yumaloq burchaklar */
+    width: 140px;
+    /* 🎨 Gradient Fon */
+    background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%); /* Qizil va Firuza */
+    color: white;
+    font-weight: 500;
+    
+    /* Effektlar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+    transition: all 0.2s ease;
+}
+
+/* 3. Hover (sichqoncha ustiga kelganda) effekti */
+.upload-button-small:hover {
+    background: linear-gradient(135deg, #4ECDC4 0%, #FF6B6B 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 4. Fayl tanlanganda tugmani o'zgartirish (qo'shimcha) */
+/* Agar fayl tanlansa, label matnini o'zgartirish uchun JS ishlatish kerak. */
+/* CSSda faqat fon rangini o'zgartirish mumkin: */
+.picture-small:valid + .upload-button-small {
+    background: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%); /* Ko'k rang */
+}
+   
 </style>
 <div class="profile-container">
     <!-- Profile Header (image + username + change photo button) -->
@@ -122,11 +172,18 @@
             {{ form.bio }}
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="id_profile_pic">Profile Picture</label>
-            <input type="file" name="profile_picture" id="id_profile_pic" accept="image/*">
-        </div>
+            <input type="file" name="profile_picture" id="id_profile_pic" accept="image/*" class="picture" >
+        </div> -->
 
+        <div class="small-upload-box">
+    <input type="file" name="profile_picture" id="small_profile_pic" accept="image/*" class="picture-small">
+    
+    <label for="small_profile_pic" class="upload-button-small">
+        <i class="fas fa-upload"></i> Rasm Yuklash
+    </label>
+</div>
 
         <div class="form-group">
             <label for="id_first_name">First name</label>

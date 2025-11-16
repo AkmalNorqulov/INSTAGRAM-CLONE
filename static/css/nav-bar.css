@@ -139,7 +139,10 @@ body {
   margin-top: auto;
   padding-top: 8px;
   border-top: 1px solid var(--border-color);
+  
 }
+
+
 
 .more-btn,
 .meta-btn {
@@ -197,3 +200,48 @@ body {
     margin-left: 72px;
   }
 }
+
+
+
+
+.switch:hover{
+  border: 1px solid;
+  border-color: white;
+}
+
+
+.profile:hover{
+border:  1px solid;
+border-color: white;
+}
+
+
+.logout:hover{
+border: 1px solid;
+border-color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
