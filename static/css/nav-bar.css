@@ -23,11 +23,11 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
-
+/* 
 #app {
   display: flex;
   min-height: 100vh;
-}
+} */
 
 .sidebar {
   width: 245px;
@@ -121,7 +121,6 @@ body {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   margin-right: 16px;
   flex-shrink: 0;
 }
