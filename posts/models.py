@@ -71,10 +71,12 @@ class InstagramPost(models.Model):
     )
 
     # Yangilangan sana: Oxirgi marta o'zgartirilgan sana
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Yangilangan Sana"
-    )
+
+    
+    # updated_at = models.DateTimeField(
+    #     auto_now=True,
+    #     verbose_name="Yangilangan Sana"
+    # )
 
     # --- Ob'ektni Ko'rsatish ---
     
