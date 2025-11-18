@@ -1,10 +1,7 @@
+<!-- Base templates asosiy saxifa -->
+
 {% load static %}
 
-
-   
-
-
-<!doctype html>
 
 <html lang="en">
 
@@ -18,18 +15,26 @@
 
 <body>
   <div id="app">
+
+    <!-- Chap tomondagi sidebar menu uchun qilinga  nav -->
+
     <nav class="sidebar">
 
+<div class="sidebar-logo">
+  <svg class="instagram-icon" viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" stroke-width="2">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+</div>
 
-      <div class="sidebar-logo">
-        <svg class="instagram-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-        </svg>
-      </div>
+        <img src="{% static 'images/images.png' %}" alt="Instagram logo" class="instagram-logo" style="width: 120px;margin-left: 39%;margin-top: -28%;">
+<br><br>
+      <ul class="sidebar-menu" >
 
-      <ul class="sidebar-menu">
+        <!-- Home qismi uchun yozilgan kod va url -->
+
         <li class="menu-item active">
           <a href="{% url 'post_list' %}" class="menu-link">
             <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -40,6 +45,8 @@
           </a>
         </li>
 
+        <!-- Reels qismi uchun yozilgan kod va url -->
+
         <li class="menu-item">
           <a href="#" class="menu-link">
             <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -49,18 +56,21 @@
             <span class="menu-text">Reels</span>
           </a>
         </li>
-<li class="menu-item">
-  <a href="{% url 'users:mesages' %}" class="menu-link">
-    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M22 2L11 13M22 2l-7 20-3-10-10-3 20-7z"/>
-    </svg>
-    <span class="menu-text">Messages</span>
-    <span class="badge">0</span>
-  </a>
-</li>
+
+        <!-- Messages qismi uchun yozilgan koda va url -->
+
+          <li class="menu-item">
+            <a href="{% url 'users:mesages' %}" class="menu-link">
+              <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13M22 2l-7 20-3-10-10-3 20-7z"/>
+              </svg>
+              <span class="menu-text">Messages</span>
+              <span class="badge">0</span>
+            </a>
+          </li>
 
 
-
+    <!-- Search qismi uchuun yozilgan kod va url -->
 
         <li class="menu-item">
           <a href="{% url 'users:search' %}" class="menu-link" id="sidebarSearchBtn">
@@ -71,6 +81,8 @@
             <span class="menu-text">Search</span>
           </a>
         </li>
+
+        <!-- Explore qismi uchun yozilgan kod va url -->
 
         <li class="menu-item">
           <a href="#" class="menu-link">
@@ -83,6 +95,8 @@
           </a>
         </li>
 
+        <!-- Bildirishnomalar qismi uchun yozilgan kod va url -->
+
         <li class="menu-item">
           <a href="#" class="menu-link">
             <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -94,6 +108,8 @@
           </a>
         </li>
 
+        <!-- Yangi post qo'shish uchun qilingan qism va url -->
+
         <li class="menu-item">
           <a href="{% url 'post_create' %}" class="menu-link">
             <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -104,6 +120,8 @@
             <span class="menu-text">Create</span>
           </a>
         </li>
+
+        <!-- Instagramdagi o'suvchanlik uchun qilingan qisim va url -->
 
         <li class="menu-item">
           <a href="#" class="menu-link">
@@ -117,17 +135,19 @@
           </a>
         </li>
 
-<li class="menu-item">
-  <a href="{% url 'users:settings' %}" class="menu-link">
-    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="3"></circle>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-    </svg>
-    <span class="menu-text">Settings</span>
-  </a>
-</li>
+        <!-- Settings qismi uchun yozilgan kod va url -->
 
-        
+        <li class="menu-item">
+          <a href="{% url 'users:settings' %}" class="menu-link">
+            <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span class="menu-text">Settings</span>
+          </a>
+        </li>
+
+        <!-- Profile qismi uchun yozilgan kod va url -->
 
         <li class="menu-item">
           <a href="{% url 'users:profile' %}" class="menu-link">
@@ -136,6 +156,8 @@
           </a>
         </li>
       </ul>
+
+      <!-- Dropdown tugmasi uchun yozilgan kodlar va css -->
 
       <div class="sidebar-footer">
         <div style="position: relative; display: inline-block;">
@@ -151,17 +173,26 @@
             <span>More</span>
           </button>
 
+          
+
           <div onmouseover="this.style.display='block';" onmouseout="this.style.display='none';" 
             style="display: none; position: absolute; left: 0; bottom: 100%; background: rgb(255, 255, 255); border: 1px solid #ddd; border-radius: 8px; width: 180px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 100;width: 200px;height: 100px;">
+
+            <!-- Akountni almashtirish uchun qilingan tugma -->
+            
             <a href="{% url 'users:logout' %}" style="display: block; padding: 10px 14px; color: #333; text-decoration: none;color: white;" class="switch">Switch
               Account</a>
+
+              <!-- Profile qismi uchun qilingan kod -->
+
             <a href="{% url 'users:profile' %}" style="display: block; padding: 10px 14px; color: #333; text-decoration: none;color: white;" class="profile">Profile</a>
+            <!-- Logout qismi uchun qilingan  kod                                                                                                                                                                                      -->
             <a href="{% url 'users:logout' %}" style="display: block; padding: 10px 14px; color: #333; text-decoration: none;color: white;" class="logout">Logout</a>
           </div>
         </div>
 
       </div>
-
+                           
 
       <button class="menu-link meta-btn">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
