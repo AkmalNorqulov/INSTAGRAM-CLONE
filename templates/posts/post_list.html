@@ -158,7 +158,7 @@
                 </header>
 
                 <div class="post-media">
-                    <a href="{% url 'post_detail' post.pk %}">
+                    <a href="{% url 'posts:post_detail' post.pk %}">
                         <img src="{{ post.image.url }}" alt="{{ post.caption|truncatechars:30 }}">
                     </a>
                 </div>
@@ -222,7 +222,7 @@
 
 
 
-                        <a href="{% url 'post_detail' post.pk %}" style="text-decoration: none;">
+                        <a href="{% url 'posts:post_detail' post.pk %}" style="text-decoration: none;">
 
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 50 50" aria-hidden="false" style="width: 28px;margin-top:5px;">
   <title>Komment ikonka</title>
@@ -245,7 +245,7 @@
                     
                     {% if post.comments.count > 0 %}
                         <div class="post-comments-count">
-                            <a href="{% url 'post_detail' post.pk %}" style="color: inherit; text-decoration: none;">
+                            <a href="{% url 'posts:post_detail' post.pk %}" style="color: inherit; text-decoration: none;">
                                 Barcha {{ post.comments.count }} ta sharhni ko'rish
                             </a>
                         </div>

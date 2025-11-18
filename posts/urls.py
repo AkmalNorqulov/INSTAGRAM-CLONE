@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import PostListView, PostDetailView, add_comment, toggle_like, post_create
 
-# app_name = 'posts'
+app_name = 'posts'
 urlpatterns = [
     path('', PostListView.as_view(), name='post_list'),
     path('<int:pk>/', PostDetailView.as_view(), name='post_detail'),
