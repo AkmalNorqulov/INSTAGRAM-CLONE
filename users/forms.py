@@ -1,8 +1,12 @@
+# Django kutubxonalar
 from django import forms
 from .models import UserProfile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate
 from django import forms
+
+# Custom user yani admin panelda Usres yani foydalanuvchi
+#  akountlarini alohida ajratib turishi uchun qilingan  clas va funksiya
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -28,6 +32,8 @@ class CustomUserCreationForm(UserCreationForm):
             user.save()
         return user
 
+
+# Custom usering login formi uhcun yozilgan clas va funksiya
 class CustomUserLoginForm(AuthenticationForm):
     class Meta():
         model = UserProfile
@@ -48,18 +54,22 @@ class CustomUserLoginForm(AuthenticationForm):
         if username and password:
             user = authenticate(self.request, username=username, password=password)
 
+            # login qismidagi eroor uchun yozilgan fuksiya
+
             if user is None:
                 raise forms.ValidationError(
                     "Username or password is incorrect.",
                     code="invalid_login"
                 )
 
-            # Store user so get_user() works
+            
             self.user_cache = user
 
         return super().clean()
 
 
+
+# Profile Update qismi uchun yozilgan class va funksiya
 
 class UserProfileUpdateForm(forms.ModelForm):
     class Meta:

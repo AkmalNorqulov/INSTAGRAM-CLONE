@@ -53,12 +53,16 @@ body {
 .sidebar-logo {
   padding: 25px 12px 16px;
   margin-bottom: 19px;
+  margin-right: 5%;
+    transform: translateX(8%);
 }
 
 .instagram-icon {
   width: 103px;
   height: 29px;
   color: var(--text-primary);
+  transform: translateX(8%);
+  margin-right: 5%;
 }
 
 .sidebar-menu {
@@ -236,7 +240,9 @@ border-color: white;
 
 
 
-
+.instagram-logo{
+  width: 100px;
+}
 
 
 

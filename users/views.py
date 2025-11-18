@@ -1,9 +1,14 @@
+# Koddagi hamma funksiyalar uchun yozilgan kutubxonalar
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import UserProfile
 from .forms import CustomUserCreationForm, CustomUserLoginForm, UserProfileUpdateForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
+
+
+# Register qismi uchun qilingan class va funksiya
 
 class RegisterView(View):
     def get(self, request):
@@ -17,6 +22,9 @@ class RegisterView(View):
             form.save()
             return redirect('users:login')
         return render(request, 'users/register.html', {'form': form})
+
+
+# Login qismi uchun qilingan class va funksiya
 
 class LoginView(View):
     def get(self, request):
@@ -32,16 +40,30 @@ class LoginView(View):
             return redirect('users:profile')
         return render(request, 'users/login.html', {'form': form})
 
+
+
+
+# Logout qismi uchun qilingan class
+
+
 class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('users:login')
+
+
+# Profile qismi uchun qilingan classs
 
 class ProfileView(View):
     def get(self, request):
         profile = request.user
         return render(request, 'users/profile.html', {'profile': profile})
     
+
+
+
+# Profile Update qismi uchun zilingan class va funksiya 
+
 class ProfileUpdateView(View):
     def get(self, request):
         profile = request.user
@@ -59,10 +81,10 @@ class ProfileUpdateView(View):
 
 
 
-# class SettingsView(TemplateView):
-#     template_name = "users/settings.html"
 
 
+
+# Settings qismi uchun qilingan classs
 
 class SettingsView(View):
     def get(self, request):
@@ -71,12 +93,16 @@ class SettingsView(View):
 
 
 
+# Search qismi uchun qilingan class
+
 class SearchView(View):
     def get(self,request):
         profile = request.user
         return render(request, 'users/search.html', {'profile':profile})
     
 
+
+# Mesagses qismi uchun qilingan class
 
 class MesagesView(View):
     def get(self,request):
