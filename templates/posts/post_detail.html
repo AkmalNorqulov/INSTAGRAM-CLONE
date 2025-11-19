@@ -137,7 +137,7 @@
                 </div>
             
                 {% if user.is_authenticated %}
-                <form class="comment-input-area" id="comment-form" action="{% url 'add_comment' post.pk %}">
+                <form class="comment-input-area" id="comment-form" action="{% url 'posts:add_comment' post.pk %}">
                     <button type="button" id="emoji-btn">😊</button>
 
                     <input type="text" placeholder="Sharh qoldirish..." name="comment_text" id="comment-text-input" required>
