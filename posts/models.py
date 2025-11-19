@@ -2,9 +2,11 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 
-# Agar sizda foydalanuvchilar mavjud bo'lsa
+# Agar foydalanuvchilar mavjud bo'lsa
 User = get_user_model()
 
+
+# Instagram post modeli
 class InstagramPost(models.Model):
     """
     Mukammal Instagram Postini ifodalovchi model.
@@ -122,14 +124,17 @@ class Comment(models.Model):
         verbose_name="Yaratilgan Sana"
     )
 
+# Sharhni o'qish uchun qulay formatda qaytaradi 
     def __str__(self):
         return f"{self.author.username}: {self.text[:30]}"
 
+# Sharh modeli uchun metama'lumotlar
     class Meta:
         verbose_name = "Sharh"
         verbose_name_plural = "Sharhlar"
-        ordering = ['created_at']
+        ordering = ['created_at'] # Eng so'nggi sharhlar birinchi ko'rinadi
 
+# Like modeli
 class Like(models.Model):
     """
     Postlarga qoldirilgan yoqtirishlarni ifodalovchi model.
@@ -139,20 +144,21 @@ class Like(models.Model):
         on_delete=models.CASCADE,
         related_name='likes', # post.likes.count() orqali like soniga erishish uchun
         verbose_name="Post"
-    )
+    ) # postga like qo'shish uchun
     
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='likes_given',
         verbose_name="Yoqtirgan foydalanuvchi"
-    )
+    ) # user qaysi postga like bosganini ko'rsatadi
     
     created_at = models.DateTimeField(
         default=timezone.now,
         verbose_name="Yaratilgan Sana"
-    )
+    ) # yaratilgan sana ko'rsatadi
 
+# Like modeli uchun metama'lumotlar
     class Meta:
         verbose_name = "Yoqtirish (Like)"
         verbose_name_plural = "Yoqtirishlar (Likes)"
