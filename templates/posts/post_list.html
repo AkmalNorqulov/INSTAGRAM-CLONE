@@ -33,6 +33,10 @@
         /* Chegaralar to'q kulrang */
         margin-bottom: 24px;
         border-radius: 8px;
+<<<<<<< HEAD
+=======
+        padding: 5px;
+>>>>>>> 8556d7ea89b45b006d7066484a642f54d89ce3c9
     }
 
     .post-header {
@@ -171,6 +175,7 @@
 
         <header class="post-header">
             <div class="post-header-avatar">
+<<<<<<< HEAD
                 <span style="display:none">
                     Muallif: {{ post.author }} <br>
                     Model turi: {{ post.author|pprint }} <br>
@@ -181,11 +186,21 @@
                     <img src="{{ post.author.profile_picture.url }}" alt="{{ post.author.username }}">
                 {% else %}
                     <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" alt="default">
+=======
+                {% if post.author.profile_picture %}
+                <img src="{{ post.author.profile_picture.url }}" alt="{{ post.author.username }}">
+                {% else %}
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" alt="default user">
+>>>>>>> 8556d7ea89b45b006d7066484a642f54d89ce3c9
                 {% endif %}
             </div>
 
             <div>
+<<<<<<< HEAD
                 <a href="{% url 'users:profile' %}" class="post-header-username">{{ post.author.username }}</a>
+=======
+                <a href="#" class="post-header-username">{{ post.author.username }}</a>
+>>>>>>> 8556d7ea89b45b006d7066484a642f54d89ce3c9
             </div>
         </header>
 
@@ -257,7 +272,11 @@
 
                 {% if post.hashtags %}
                 {% for tag in post.hashtags|split_string:','|slice:":5" %}
+<<<<<<< HEAD
                 <a href="#" class="hashtag">{{ tag|remove_spaces }}</a>
+=======
+                <a href="#" class="hashtag">#{{ tag|remove_spaces }}</a>
+>>>>>>> 8556d7ea89b45b006d7066484a642f54d89ce3c9
                 {% endfor %}
                 {% endif %}
             </div>

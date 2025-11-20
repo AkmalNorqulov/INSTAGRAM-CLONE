@@ -1,265 +1,316 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-        /* Asosiy va Umumiy Stillar */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #000000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            color: white;
-        }
-        
-        /* Modal Konteyneri (Asosiy Oyna) */
-        .create-modal {
-            width: 100%;
-            max-width: 900px; /* Kattaroq kenglik */
-            max-height: 600px;
-            background-color: #fff;
-            border-radius: 12px;
-            overflow: hidden; /* Ichki elementlar chegaradan chiqmasligi uchun */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-        }
+    /* Asosiy va Umumiy Stillar (Dark Mode uchun) */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #000000;
+        /* Asosiy fon qora */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        color: white;
+        /* Asosiy matn rangi oq */
+    }
 
-        /* Modalning Bosh Qismi (Header) */
-        .modal-header {
-            padding: 10px 20px;
-            border-bottom: 1px solid #dbdbdb;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 16px;
-        }
-        .modal-header h2 {
-            font-weight: 600;
-            margin: 0;
-            color: #262626;
-        }
-        .post-btn {
-            color: #0095f6;
-            font-weight: 600;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px 10px;
-            font-size: 14px;
-            transition: opacity 0.2s;
-        }
-        .post-btn:disabled {
-            opacity: 0.5;
-            cursor: default;
-        }
+    /* Modal Konteyneri (Asosiy Oyna) */
+    .create-modal {
+        width: 100%;
+        max-width: 900px;
+        max-height: 600px;
+        background-color: #262626;
+        /* Modal fonini to'q kulrang qilish */
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+    }
 
-        /* Asosiy Kontent Qismi (Rasm + Forma) */
-        .modal-content {
-            display: flex;
-            flex-grow: 1;
-            min-height: 0; /* Flexbox uchun muhim */
-        }
-        
-        /* 1. Rasm (Preview) Ustuni */
-        .media-preview-column {
-            flex: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #000;
-            min-height: 400px;
-        }
+    /* Modalning Bosh Qismi (Header) */
+    .modal-header {
+        padding: 10px 20px;
+        border-bottom: 1px solid #4a4a4a;
+        /* Chegara rangini to'qlashtirish */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 16px;
+        background-color: #262626;
+        /* Header foni */
+    }
 
-        /* Rasm joylashmaganda ko'rinadigan qism */
-        .placeholder {
-            text-align: center;
-            color: #8e8e8e;
-        }
-        .placeholder-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-        #image-preview {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
+    .modal-header h2 {
+        font-weight: 600;
+        margin: 0;
+        color: white;
+        /* Header sarlavhasi oq */
+    }
 
-        /* 2. Forma (Ma'lumot) Ustuni */
-        .form-column {
-            flex: 1;
-            padding: 20px;
-            border-left: 1px solid #dbdbdb;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
+    .post-btn {
+        color: #0095f6;
+        font-weight: 600;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        font-size: 14px;
+        transition: opacity 0.2s;
+    }
 
-        /* Forma elementlari stillari */
-        .form-field {
-            margin-bottom: 20px;
-        }
-        .form-field label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #262626;
-            font-size: 14px;
-        }
-        .form-field input[type="text"],
-        .form-field textarea,
-        .form-field select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #dbdbdb;
-            border-radius: 3px;
-            box-sizing: border-box;
-            font-size: 14px;
-            resize: vertical;
-        }
+    .post-btn:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
 
-        /* File inputni yashirish va o'z tugmachasini yaratish */
-        #id_image {
-            display: none; 
-        }
-        .custom-file-upload {
-            border: 1px solid #dbdbdb;
-            display: inline-block;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 4px;
-            background-color: #efefef;
-            font-weight: 600;
-            color: #262626;
-            transition: background-color 0.2s;
-        }
-        .custom-file-upload:hover {
-            background-color: #e0e0e0;
-        }
+    /* Asosiy Kontent Qismi (Rasm + Forma) */
+    .modal-content {
+        display: flex;
+        flex-grow: 1;
+        min-height: 0;
+    }
 
-        /* Foydalanuvchi ma'lumotlari (Headerda) */
-        .user-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #efefef;
-        }
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: #eee;
-            margin-right: 10px;
-        }
-        .username {
-            font-weight: 600;
-        }
-        
-    </style>
+    /* 1. Rasm (Preview) Ustuni */
+    .media-preview-column {
+        flex: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #000000;
+        /* Qora fon rasmlar uchun eng yaxshi */
+        min-height: 400px;
+    }
 
-    
-    {% if user.is_authenticated %}
-        <div class="create-modal">
-            
-            <form method="POST" enctype="multipart/form-data" id="post-create-form">
-                {% csrf_token %}
-                
-                <header class="modal-header">
-                    <span style="visibility: hidden;">Bekor Qilish</span> 
-                    <h2 style="color: white;"> Yangi Post</h2>
-                    <button type="submit" class="post-btn" id="submit-post-btn" disabled style="color:#0095f6;" >Bo'lishish</button>
-                </header>
-                
-                <div class="modal-content">
-                    
-                    <div class="media-preview-column">
-                        <img id="image-preview" src="" alt="Rasm yuklanmadi" style="display: none;">
-                        
-                        <div class="placeholder" id="image-placeholder">
-                          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACSElEQVR4nO3au2sUURSA8Y2KD6IiiIUWYqGrhTY+Chsbe0FwCYKlYGNUBDtRq/hII/4DgqIWgtqZKFpGCxXsfKTw3Qgq+I6Sn4xsQJbJrDu72Z3H/eDCFveePeeb2dk7M6dSCQQCgUAgEAgEpgWzsQU7Ucv4iHLcjFmVToDdeC1/vMJAu8Ufkn8Opi1+LX7JPxOophFwRnE4lUbAbcVhNI2AMcVhLAhoFUGAIEBx6ImAmzhQH6NKJuBwTLwjSiJgDH0x8fpwv8OFZVLAUELMISUQcDYh5jklEPAc82PiLcC4klwEL6H/n1gLcVnJ/gbf4Up9RJ97SdgIVYKAFhEE6KWAn7iO4xjGvTIJeIJ1MfnswpeiC3iAZQk5Re8m3udFwLcW59/Fov/Iaz3eZFXAx/q7hL9HEStwDF+brLsWt3tMyG0VnmZNwDOsSThqL6ZZdwFzUuS3tIW7yxkXcAdLEmLNxY2YdcNxt84t5Li4/tPpqYDzUYEJcfox0rBmEifSFt4Qfx6u9kLAJI6mOE1/Y287RU/z9vpiNwX8wJ4m65fjccwGp9ZOsQnfV+umgH1N1lZjLnqfsb2dIrMkoJawLrriv22Y/wFb2y0y8wKwDZ8a5kbPAjZ0osgsCdgfM38Hvsfs61d2qsgm+Q52U8AEHtb37lMjrplivGHOTI1H9Zy6JiBvpBJwS3EYSSPgtOJwMo2AaoGapFa3LCAiajGTfwYr7YCBetNh3ngZPUZrq/gporZTbMpRq+zGjrXKBgKBQCAQCAQqxeQPd981umAyWH4AAAAASUVORK5CYII=" alt="image">
-                            <p>Rasm tanlang</p>
-                            
-                            {{ form.image }}
-                            <label for="id_image" class="custom-file-upload">
-                                Kompyuterdan tanlash
-                            </label>
-                            
-                        </div>
-                    </div>
-                    
-                    <div class="form-column">
-                        
-                        <div class="user-info">
-                            <div class="user-avatar"></div>
-                            <span class="username">{{ user.username }}</span>
-                        </div>
+    /* Rasm joylashmaganda ko'rinadigan qism */
+    .placeholder {
+        text-align: center;
+        color: #8e8e8e;
+        display: flex;
+        /* Elementlarni markazga joylash uchun */
+        flex-direction: column;
+        align-items: center;
+    }
 
-                        <div class="form-field">
-                            <label for="{{ form.caption.id_for_label }}" style="color: white;">Sarlavha</label>
-                            {{ form.caption }}
-                        </div>
-                        
-                        <div class="form-field">
-                            <label for="{{ form.location.id_for_label }}" style="color: white;">Joylashuv</label>
-                            {{ form.location }}
-                        </div>
+    .placeholder-icon {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
 
-                        <div class="form-field">
-                            <label for="{{ form.post_type.id_for_label }}" style="color: white;">Post Turi</label>
-                            {{ form.post_type }}
-                        </div>
-                        
-                        <div class="form-field">
-                            <label for="{{ form.hashtags.id_for_label }}" style="color: white;">Hashtaglar</label>
-                            {{ form.hashtags }}
-                        </div>
+    #image-preview {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
 
-                    </div>
-                    
+    /* 2. Forma (Ma'lumot) Ustuni */
+    .form-column {
+        flex: 1;
+        padding: 20px;
+        border-left: 1px solid #4a4a4a;
+        /* Chegara rangini to'qlashtirish */
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        background-color: #262626;
+        /* Forma foni */
+    }
+
+    /* Forma elementlari stillari */
+    .form-field {
+        margin-bottom: 20px;
+    }
+
+    .form-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: white !important;
+        /* Label rangi oq */
+        font-size: 14px;
+    }
+
+    .form-field input[type="text"],
+    .form-field textarea,
+    .form-field select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #4a4a4a;
+        /* Chegarani moslashtirish */
+        border-radius: 3px;
+        box-sizing: border-box;
+        font-size: 14px;
+        resize: vertical;
+        background-color: #121212;
+        /* Kirish maydonlari foni to'qroq */
+        color: white;
+        /* Kirish maydonlari matni oq */
+    }
+
+    /* File inputni yashirish va o'z tugmachasini yaratish */
+    #id_image {
+        display: none;
+    }
+
+    .custom-file-upload {
+        border: 1px solid #0095f6;
+        /* Chegarani Instagram ko'k rangida qilish */
+        display: inline-block;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        background-color: #0095f6;
+        /* Tugma foni ko'k */
+        font-weight: 600;
+        color: white;
+        /* Tugma matni oq */
+        transition: background-color 0.2s;
+        margin-top: 15px;
+        /* Bo'shliq qo'shish */
+    }
+
+    .custom-file-upload:hover {
+        background-color: #0076c7;
+    }
+
+    /* Foydalanuvchi ma'lumotlari (Headerda) */
+    .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #4a4a4a;
+        /* Chegarani moslashtirish */
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #555;
+        /* Avatarning to'q kulrang foni */
+        margin-right: 10px;
+    }
+
+    .username {
+        font-weight: 600;
+        color: white;
+        /* Username oq rangda */
+    }
+</style>
+
+
+{% if user.is_authenticated %}
+<div class="create-modal">
+
+    <form method="POST" enctype="multipart/form-data" id="post-create-form">
+        {% csrf_token %}
+
+        <header class="modal-header">
+            <span style="visibility: hidden;">Bekor Qilish</span>
+            <h2 style="color: white;"> Yangi Post</h2>
+            <button type="submit" class="post-btn" id="submit-post-btn" disabled
+                style="color:#0095f6;">Bo'lishish</button>
+        </header>
+
+        <div class="modal-content">
+
+            <div class="media-preview-column">
+                <img id="image-preview" src="" alt="Rasm yuklanmadi" style="display: none;">
+
+                <div class="placeholder" id="image-placeholder">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACSElEQVR4nO3au2sUURSA8Y2KD6IiiIUWYqGrhTY+Chsbe0FwCYKlYGNUBDtRq/hII/4DgqIWgtqZKFpGCxXsfKTw3Qgq+I6Sn4xsQJbJrDu72Z3H/eDCFveePeeb2dk7M6dSCQQCgUAgEAgEpgWzsQU7Ucv4iHLcjFmVToDdeC1/vMJAu8Ufkn8Opi1+LX7JPxOophFwRnE4lUbAbcVhNI2AMcVhLAhoFUGAIEBx6ImAmzhQH6NKJuBwTLwjSiJgDH0x8fpwv8OFZVLAUELMISUQcDYh5jklEPAc82PiLcC4klwEL6H/n1gLcVnJ/gbf4Up9RJ97SdgIVYKAFhEE6KWAn7iO4xjGvTIJeIJ1MfnswpeiC3iAZQk5Re8m3udFwLcW59/Fov/Iaz3eZFXAx/q7hL9HEStwDF+brLsWt3tMyG0VnmZNwDOsSThqL6ZZdwFzUuS3tIW7yxkXcAdLEmLNxY2YdcNxt84t5Li4/tPpqYDzUYEJcfox0rBmEifSFt4Qfx6u9kLAJI6mOE1/Y287RU/z9vpiNwX8wJ4m65fjccwGp9ZOsQnfV+umgH1N1lZjLnqfsb2dIrMkoJawLrriv22Y/wFb2y0y8wKwDZ8a5kbPAjZ0osgsCdgfM38Hvsfs61d2qsgm+Q52U8AEHtb37lMjrplivGHOTI1H9Zy6JiBvpBJwS3EYSSPgtOJwMo2AaoGapFa3LCAiajGTfwYr7YCBetNh3ngZPUZrq/gporZTbMpRq+zGjrXKBgKBQCAQCAQqxeQPd981umAyWH4AAAAASUVORK5CYII="
+                        alt="image">
+                    <p>Rasm tanlang</p>
+
+                    {{ form.image }}
+                    <label for="id_image" class="custom-file-upload">
+                        Kompyuterdan tanlash
+                    </label>
+
                 </div>
+<<<<<<< HEAD
             </form>
         </div>
     {% else %}
         <p>Post qo'shish uchun tizimga kirishingiz kerak.</p>
         <a href="{% url 'users:login' %}">Kirish sahifasi</a>
     {% endif %}
+=======
+            </div>
+>>>>>>> 8556d7ea89b45b006d7066484a642f54d89ce3c9
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const imageInput = document.getElementById('id_image');
-            const imagePreview = document.getElementById('image-preview');
-            const imagePlaceholder = document.getElementById('image-placeholder');
-            const submitButton = document.getElementById('submit-post-btn');
-            
-            // 1. Rasm tanlanganda uni oldindan ko'rish va tugmani faollashtirish
-            imageInput.addEventListener('change', function(event) {
-                if (event.target.files && event.target.files[0]) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        imagePreview.src = e.target.result;
-                        imagePreview.style.display = 'block';
-                        imagePlaceholder.style.display = 'none';
-                        submitButton.disabled = false; // Rasm tanlansa, Post tugmasi faol
-                    }
-                    
-                    reader.readAsDataURL(event.target.files[0]);
-                } else {
-                    imagePreview.style.display = 'none';
-                    imagePlaceholder.style.display = 'flex';
-                    submitButton.disabled = true; // Rasm yo'q bo'lsa, Post tugmasi nofaol
+            <div class="form-column">
+
+                <div class="user-info">
+                    <div class="user-avatar"><img style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" src="{{ request.user.profile_picture.url }}" alt=""></div>
+                    <span class="username">{{ user.username }}</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.caption.id_for_label }}" style="color: white;">Sarlavha</label>
+                    {{ form.caption }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.location.id_for_label }}" style="color: white;">Joylashuv</label>
+                    {{ form.location }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.post_type.id_for_label }}" style="color: white;">Post Turi</label>
+                    {{ form.post_type }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.hashtags.id_for_label }}" style="color: white;">Hashtaglar</label>
+                    {{ form.hashtags }}
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+</div>
+{% else %}
+<p>Post qo'shish uchun tizimga kirishingiz kerak.</p>
+<a href="{% url 'login' %}">Kirish sahifasi</a>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.getElementById('id_image');
+        const imagePreview = document.getElementById('image-preview');
+        const imagePlaceholder = document.getElementById('image-placeholder');
+        const submitButton = document.getElementById('submit-post-btn');
+
+        // 1. Rasm tanlanganda uni oldindan ko'rish va tugmani faollashtirish
+        imageInput.addEventListener('change', function (event) {
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    imagePlaceholder.style.display = 'none';
+                    submitButton.disabled = false; // Rasm tanlansa, Post tugmasi faol
                 }
-            });
-            
-            // Ikonkani Instagram logosi bilan almashtirish (Unicode/SVG o'rniga oddiy)
-            // Agar siz Unicode/SVG orqali Instagram ikonkasini topib qo'shsangiz, yanada yaxshi ko'rinadi.
-            
-            // Foydalanuvchining avatarlarini ko'rsatish logikasi (Hozircha faqat kulrang doira)
-            // Bu qism backend tomonidan foydalanuvchi rasmi bilan to'ldirilishi kerak.
+
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                imagePreview.style.display = 'none';
+                imagePlaceholder.style.display = 'flex';
+                submitButton.disabled = true; // Rasm yo'q bo'lsa, Post tugmasi nofaol
+            }
         });
-    </script>
+
+        // Ikonkani Instagram logosi bilan almashtirish (Unicode/SVG o'rniga oddiy)
+        // Agar siz Unicode/SVG orqali Instagram ikonkasini topib qo'shsangiz, yanada yaxshi ko'rinadi.
+
+        // Foydalanuvchining avatarlarini ko'rsatish logikasi (Hozircha faqat kulrang doira)
+        // Bu qism backend tomonidan foydalanuvchi rasmi bilan to'ldirilishi kerak.
+    });
+</script>
 {% endblock content %}
