@@ -139,7 +139,7 @@ def post_create(request):
             
             new_post.save()
             
-            return redirect('post_list') 
+            return redirect('posts:post_list') 
     else:
         # YANGI FORMA KLASSIDAN FOYDALANAMIZ
         form = InstagramPostCreateForm()
