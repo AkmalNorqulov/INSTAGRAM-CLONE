@@ -1,0 +1,314 @@
+{% extends "base.html" %}   
+{% load post_filters %} 
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.4/dist/index.min.js"></script>
+
+    <style>
+        /* ... Sizning stillaringiz o'zgarishsiz qoladi ... */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; margin: 0; padding: 0; display: flex; justify-content: center; }
+        .detail-layout { display: flex; max-width: 935px; max-height: 95vh; margin: 20px auto; border: 1px solid #dbdbdb; background-color: #fff; border-radius: 3px; }
+        .media-column { flex: 2; background-color: #000; display: flex; align-items: center; justify-content: center; min-width: 500px; }
+        .media-column img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .info-column { flex: 1; min-width: 335px; max-width: 335px; display: flex; flex-direction: column; border-left: 1px solid #dbdbdb; }
+        .post-header { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #efefef; font-size: 14px; }
+        .post-header-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: #efefef; margin-right: 14px; }
+        .post-header-username { font-weight: 600; color: #262626; text-decoration: none; }
+        .comments-section { flex-grow: 1; overflow-y: auto; padding: 0 16px; scrollbar-width: none; -ms-overflow-style: none; }
+        .comments-section::-webkit-scrollbar { display: none; }
+        .comment-item { display: flex; margin-bottom: 10px; padding-top: 5px; font-size: 14px; }
+        .comment-text { line-height: 18px; margin-left: 10px; }
+        .comment-username { font-weight: 600; margin-right: 6px; }
+        .caption-text-area { padding-top: 16px; }
+        .post-footer { border-top: 1px solid #efefef; padding: 0; }
+        .post-actions { padding: 4px 16px; }
+        .post-actions-icons { display: flex; align-items: center; padding: 8px 0; }
+        .action-icon-svg { font-size: 26px; line-height: 1; margin-right: 15px; cursor: pointer; color: #262626; transition: color 0.1s; }
+        .action-icon-svg:hover { opacity: 0.7; }
+        .post-likes, .post-timestamp { padding: 0 16px 8px 16px; font-size: 14px; font-weight: 600; }
+        .post-timestamp { font-weight: 400; color: #8e8e8e; font-size: 10px; padding-top: 0; }
+        .comment-input-area { border-top: 1px solid #efefef; padding: 10px 16px; display: flex; align-items: center; }
+        .comment-input-area input { flex-grow: 1; border: none; padding: 5px 10px; font-size: 14px; outline: none; }
+        .comment-input-area button { color: #0095f6; font-weight: 600; background: none; border: none; cursor: pointer; padding-right: 0; opacity: 0.5; transition: opacity 0.2s; }
+        .comment-input-area button:disabled { opacity: 0.3; cursor: default; }
+        .emoji-icon { font-size: 20px; cursor: pointer; margin-right: 8px; }
+        .hashtag { color: #00376b; text-decoration: none; cursor: pointer; margin-right: 4px; }
+        .action-icon-svg svg { width: 28px; height: 28px; cursor: pointer; transition: transform 0.2s ease, fill 0.2s ease, stroke 0.2s ease; }
+        .action-icon-svg svg:active { transform: scale(1.3); }
+    </style>
+
+    <div class="detail-layout">
+
+        <div class="media-column">
+            <img src="{{ post.image.url }}" alt="{{ post.caption|truncatechars:30 }}">
+        </div>
+
+        <div class="info-column">
+
+            <header class="post-header">
+                <div class="post-header-avatar"></div> 
+                <a href="#" class="post-header-username">{{ post.author.username }}</a>
+            </header>
+            
+            <section class="comments-section" id="comments-list">
+                
+                <div class="comment-item caption-text-area">
+                    <div class="post-header-avatar" style="width: 24px; height: 24px;"></div>
+                    <div class="comment-text">
+                        <span class="comment-username">{{ post.author.username }}</span> 
+                        {{ post.caption }}
+                        
+                        {% if post.hashtags %}
+                            {% for tag in post.hashtags|split_string:','|slice:":5" %}
+                                <a href="#" class="hashtag">#{{ tag|remove_spaces }}</a>
+                            {% endfor %}
+                        {% endif %}
+                        <div style="color: #8e8e8e; font-size: 10px; margin-top: 5px;">
+                            {{ post.created_at|date:"F j" }}
+                        </div>
+                    </div>
+                </div>
+
+                {% for comment in post.comments.all %}
+                    <div class="comment-item">
+                        <div class="post-header-avatar" style="width: 24px; height: 24px;"></div>
+                        <div class="comment-text">
+                            <span class="comment-username">{{ comment.author.username }}</span> 
+                            {{ comment.text }}
+                        </div>
+                    </div>
+                {% empty %}
+                {% endfor %}
+
+            </section>
+
+            <div class="post-footer">
+                
+                <section class="post-actions">
+                    <div class="post-actions-icons">
+                        
+                      {% is_post_liked post as is_liked %}
+
+                        {% if user.is_authenticated %}
+                            <span 
+                                class="action-icon-svg like-toggle" 
+                                id="like-icon-{{ post.pk }}"
+                                data-post-pk="{{ post.pk }}"
+                                data-liked="{% if is_liked %}yes{% else %}no{% endif %}"
+                                title="Like"
+                            >
+                                {% if is_liked %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ed4956" width="24" height="24">
+                                        <path d="M12 21s-1-.7-2.1-1.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.3.8 4.5 2.1C13.2 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-7.9 10.8C13 20.3 12 21 12 21z"/>
+                                    </svg>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                                        <path d="M12 21s-1-.7-2.1-1.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.3.8 4.5 2.1C13.2 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-7.9 10.8C13 20.3 12 21 12 21z"/>
+                                    </svg>
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <span class="action-icon-svg" title="Like">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                                    <path d="M12 21s-1-.7-2.1-1.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.3.8 4.5 2.1C13.2 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-7.9 10.8C13 20.3 12 21 12 21z"/>
+                                </svg>
+                            </span>
+                        {% endif %}
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 50 50" aria-hidden="false" style="width: 28px;">
+                          <title>Komment ikonka</title>
+                          <path fill="#ffffff" d="M 25 4.0625 C 12.414063 4.0625 2.0625 12.925781 2.0625 24 C 2.0625 30.425781 5.625 36.09375 11 39.71875 C 10.992188 39.933594 11 40.265625 10.71875 41.3125 C 10.371094 42.605469 9.683594 44.4375 8.25 46.46875 L 7.21875 47.90625 L 9 47.9375 C 15.175781 47.964844 18.753906 43.90625 19.3125 43.25 C 21.136719 43.65625 23.035156 43.9375 25 43.9375 C 37.582031 43.9375 47.9375 35.074219 47.9375 24 C 47.9375 12.925781 37.582031 4.0625 25 4.0625 Z M 25 5.9375 C 36.714844 5.9375 46.0625 14.089844 46.0625 24 C 46.0625 33.910156 36.714844 42.0625 25 42.0625 C 22.996094 42.0625 21.050781 41.820313 19.21875 41.375 L 18.65625 41.25 L 18.28125 41.71875 C 18.28125 41.71875 15.390625 44.976563 10.78125 45.75 C 11.613281 44.257813 12.246094 42.871094 12.53125 41.8125 C 12.929688 40.332031 12.9375 39.3125 12.9375 39.3125 L 12.9375 38.8125 L 12.5 38.53125 C 7.273438 35.21875 3.9375 29.941406 3.9375 24 C 3.9375 14.089844 13.28125 5.9375 25 5.9375 Z"></path>
+                        </svg>
+                    </div>
+                </section>
+
+                <div class="post-likes" id="like-count-display-{{ post.pk }}">
+                    {{ post.likes.count|default:0 }} likes
+                </div>
+                
+                {% if comment_count > 0 %}
+                    <div class="post-likes" style="font-weight: 400; color: #8e8e8e;">
+                        Barcha {{ comment_count }} ta sharhni ko'rish
+                    </div>
+                {% endif %}
+                
+                <div class="post-timestamp">
+                    {{ post.created_at|date:"YIL F J" }}
+                </div>
+            
+                {% if user.is_authenticated %}
+                <form class="comment-input-area" id="comment-form" action="{% url 'posts:add_comment' post.pk %}">
+                    <button type="button" id="emoji-btn">😊</button>
+
+                    <input type="text" placeholder="Sharh qoldirish..." name="comment_text" id="comment-text-input" required>
+                    <button type="submit" id="post-comment-btn" disabled>Post</button>
+                </form>
+                {% else %}
+                <div class="comment-input-area" style="text-align: center; color: #8e8e8e;">
+                    Sharh qoldirish uchun <a href="{% url 'login' %}" style="color: #0095f6;">kirish</a> talab qilinadi.
+                </div>
+                {% endif %}
+                
+            </div> 
+
+        </div> 
+        
+    </div> 
+
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // ===== COMMENT LOGIC =====
+    const input = document.getElementById('comment-text-input');
+    const button = document.getElementById('post-comment-btn');
+    const commentsList = document.getElementById('comments-list');
+    const commentForm = document.getElementById('comment-form');
+
+    if (input && button) {
+        input.addEventListener('input', () => {
+            button.disabled = input.value.trim().length === 0;
+        });
+    }
+
+    if (commentForm) {
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = input.value.trim();
+
+            if (text.length > 0) {
+                // Action URL dan foydalanish
+                fetch(commentForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({ text })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const newCommentHtml = `
+                            <div class="comment-item">
+                                <div class="post-header-avatar" style="width:24px; height:24px;"></div>
+                                <div class="comment-text">
+                                    <span class="comment-username">${data.comment.author_username}</span>
+                                    ${data.comment.text}
+                                </div>
+                            </div>
+                        `;
+                        commentsList.insertAdjacentHTML('beforeend', newCommentHtml);
+                        input.value = '';
+                        button.disabled = true;
+                        commentsList.scrollTop = commentsList.scrollHeight;
+                    } else {
+                        alert('Sharh qo\'shishda xato: ' + data.error);
+                    }
+                })
+                .catch(err => {
+                    console.error('Sharh AJAX xato:', err);
+                    alert('Server bilan bog\'lanishda xato yuz berdi.');
+                });
+            }
+        });
+    }
+
+    // ===== LIKE LOGIC =====
+    document.querySelectorAll('.like-toggle').forEach(button => {
+        const svg = button.querySelector('svg');
+        button.addEventListener('click', () => {
+            const postPk = button.dataset.postPk;
+            const liked = button.dataset.liked === 'yes';
+            // ID ni to'g'rilash
+            const likeCountDisplay = document.getElementById(`like-count-display-${postPk}`);
+
+            fetch(`/posts/${postPk}/like/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({})
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    alert('Like bosish uchun tizimga kiring!');
+                    return;
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Rangni yangilash
+                    if (liked) {
+                        svg.setAttribute('fill', 'none');
+                        svg.setAttribute('stroke', 'white');
+                        button.dataset.liked = 'no';
+                    } else {
+                        svg.setAttribute('fill', '#ed4956');
+                        svg.removeAttribute('stroke');
+                        button.dataset.liked = 'yes';
+                    }
+
+                    // Like count yangilash
+                    if (likeCountDisplay) likeCountDisplay.innerText = `${data.new_count} likes`;
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(err => {
+                console.error('Like AJAX xato:', err);
+                alert('Server bilan bog\'lanishda xato yuz berdi.');
+            });
+        });
+    });
+
+    // ===== EMOJI LOGIC (Xavfsizlik uchun if ichida) =====
+    const emojiBtn = document.getElementById('emoji-btn');
+    
+    // Faqat agar tugma mavjud bo'lsa (login qilingan bo'lsa) ishlaydi
+    if (emojiBtn) {
+        // EmojiButton mavjudligini tekshirish (kutubxona yuklanganmi)
+        if (typeof EmojiButton !== 'undefined') {
+            const picker = new EmojiButton({
+                position: 'top-end',
+                theme: 'auto',       
+                emojisPerRow: 8,      
+                rows: 15,            
+                showPreview: true,    
+                showSearch: true,     
+                showRecents: true,    
+            });
+
+            const textarea = document.getElementById('comment-text-input');
+
+            picker.on('emoji', emoji => {
+                if(textarea) {
+                    textarea.value += emoji;
+                    const postBtn = document.getElementById('post-comment-btn');
+                    if(postBtn) postBtn.disabled = textarea.value.trim().length === 0;
+                }
+            });
+
+            emojiBtn.addEventListener('click', () => picker.togglePicker(emojiBtn));
+        } else {
+            console.error("EmojiButton kutubxonasi yuklanmagan!");
+        }
+    }
+    </script>
+
+{% endblock content %}
