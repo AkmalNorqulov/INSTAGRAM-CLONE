@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% load post_filters %} 
+{% load static %}
 
 {% block title %}Posts - Instagram{% endblock title %}
+
 {% block content %}
   <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #fafafa; 
+            /* Ikonkalar oq bo'lgani uchun fonni qora qilamiz (Dark Mode) */
+            background-color: #000000; 
+            color: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,17 +21,16 @@
             max-width: 470px;
             width: 100%;
             margin: 20px 0;
-            margin-left: 35%;
-            border-radius: 20px;
+            /* Markazlashtirish */
+            margin: 0 auto; 
+            padding-top: 20px;
         }
 
         .instagram-post {
-            background-color: #fff;
-            border: 2px solid #dbdbdb;
+            background-color: #000000; /* Post foni qora */
+            border: 1px solid #363636; /* Chegaralar to'q kulrang */
             margin-bottom: 24px;
-            border-radius: 13px;
-            margin-top: 26%;
-
+            border-radius: 8px;
         }
 
         .post-header {
@@ -36,111 +39,121 @@
             padding: 12px 16px;
         }
 
+        /* --- AVATAR STILI --- */
         .post-header-avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background-color: #eee;
             margin-right: 14px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #363636;
+        }
+
+        .post-header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .post-header-username {
             font-weight: 600;
             font-size: 14px;
-            color: #262626;
+            color: #ffffff; /* Username oq */
             text-decoration: none;
         }
         
         .post-media {
             width: 100%;
-            aspect-ratio: 1 / 1; 
-            background-color: #eee;
+            /* Rasm original o'lchamda chiqishi uchun aspect-ratio olib tashlanishi mumkin, 
+               lekin kvadrat bo'lishi uchun qoldiramiz */
+            background-color: #262626;
         }
 
         .post-media img {
             width: 100%;
-            height: 100%;
+            height: auto;
+            display: block;
             object-fit: cover; 
         }
 
         .post-actions {
-            padding: 4px 16px;
+            padding: 12px 16px 0 16px;
         }
         
         .post-actions-icons {
             display: flex;
             align-items: center;
-            padding: 8px 0;
         }
         
         .action-icon-svg { 
-            font-size: 26px; 
-            line-height: 1; 
-            margin-right: 15px; 
+            margin-right: 16px; 
             cursor: pointer; 
-            color: #262626; 
-            transition: color 0.1s;
+            color: #ffffff; /* Default oq */
+            transition: transform 0.1s;
         }
         
         .action-icon-svg:hover {
             opacity: 0.7;
         }
+        .action-icon-svg:active {
+            transform: scale(1.2);
+        }
         
         .post-info {
-            /* Post info endi faqat Like soni va Sharhlarni o'z ichiga oladi */
             padding: 0 16px 12px 16px;
             font-size: 14px;
         }
 
         .post-likes {
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            display: block;
+            color: #ffffff;
         }
         
-        .post-comments-count { /* Sharhlar soni stili */
+        .post-comments-count { 
             font-weight: 400; 
-            color: #8e8e8e; 
-            margin-bottom: 5px;
+            color: #a8a8a8; /* Kulrang */
+            margin-bottom: 6px;
             cursor: pointer;
+            font-size: 14px;
         }
         
-        /* Caption va hashtag'lar endi post-info ichida */
         .post-caption-block {
-             margin-top: 8px; /* Like/Comment count ostida joylashadi */
+             margin-top: 8px; 
         }
         
         .post-caption-text {
             line-height: 18px;
             margin-top: 5px;
             white-space: pre-line; 
+            color: #ffffff;
         }
         
         .post-caption-username {
             font-weight: 600;
             margin-right: 5px;
+            color: #ffffff;
         }
         
         .hashtag {
-            color: #00376b; 
+            color: #e0f1ff; /* Och ko'k */
             text-decoration: none;
             cursor: pointer;
             margin-right: 4px;
         }
 
-        .action-icon-svg svg {
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    transition: transform 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
-}
-
-.action-icon-svg svg:active {
-    transform: scale(1.3);
-}
+        .post-timestamp {
+            font-size: 12px;
+            color: #a8a8a8;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
 
     </style>
-</head>
-<body>
+
 
     <div class="feed-container">
 
@@ -151,7 +164,14 @@
             <article class="instagram-post">
                 
                 <header class="post-header">
-                    <div class="post-header-avatar"></div> 
+                    <div class="post-header-avatar">
+                        {% if post.author.profile.avatar %}
+                            <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}">
+                        {% else %}
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" alt="default user">
+                        {% endif %}
+                    </div> 
+                    
                     <div>
                         <a href="#" class="post-header-username">{{ post.author.username }}</a>
                     </div>
@@ -159,78 +179,48 @@
 
                 <div class="post-media">
                     <a href="{% url 'posts:post_detail' post.pk %}">
-                        <img src="{{ post.image.url }}" alt="{{ post.caption|truncatechars:30 }}">
+                        <img src="{{ post.image.url }}" alt="Post image">
                     </a>
                 </div>
 
                 <section class="post-actions">
                     <div class="post-actions-icons">
                         
-                  {% if user.is_authenticated %}
-    <span 
-        class="action-icon-svg like-toggle" 
-        id="like-icon-{{ post.pk }}"
-        data-post-pk="{{ post.pk }}"
-        data-liked="{% if is_liked %}yes{% else %}no{% endif %}" 
-        title="Like"
-    >
-        {% if is_liked %}
-            <!-- Liked → Qizil yurak -->
-            <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="#ed4956"
-            >
-                <path d="M12 21s-1-.7-2.1-1.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.3.8 4.5 2.1C13.2 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-7.9 10.8C13 20.3 12 21 12 21z"/>
-            </svg>
-        {% else %}
-            <!-- Not liked → Oq outline yurak -->
-            <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="white" 
-                stroke-width="2" 
-                stroke-linecap="round" 
-                stroke-linejoin="round"
-            >
-                <path d="M12 21s-1-.7-2.1-1.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.3.8 4.5 2.1C13.2 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-7.9 10.8C13 20.3 12 21 12 21z"/>
-            </svg>
-        {% endif %}
-    </span>
-{% else %}
-    <span class="action-icon-svg" title="Like">
-        <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="white" 
-            stroke-width="2" 
-            stroke-linecap="round" 
-            stroke-linejoin="round"
-        >
-            <path d="M12 21s-1-.7-2.1-1.7C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.3.8 4.5 2.1C13.2 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-7.9 10.8C13 20.3 12 21 12 21z"/>
-        </svg>
-    </span>
-{% endif %}
-
-
+                    {% if user.is_authenticated %}
+                        <span 
+                            class="action-icon-svg like-toggle" 
+                            id="like-icon-{{ post.pk }}"
+                            data-post-pk="{{ post.pk }}"
+                            data-liked="{% if is_liked %}yes{% else %}no{% endif %}" 
+                            title="Like"
+                        >
+                            {% if is_liked %}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ff3040" stroke="none">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        <span class="action-icon-svg" title="Like">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </span>
+                    {% endif %}
 
                         <a href="{% url 'posts:post_detail' post.pk %}" style="text-decoration: none;">
-
-<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 50 50" aria-hidden="false" style="width: 28px;margin-top:5px;">
-  <title>Komment ikonka</title>
-  <path fill="#ffffff" d="M 25 4.0625 C 12.414063 4.0625 2.0625 12.925781 2.0625 24 C 2.0625 30.425781 5.625 36.09375 11 39.71875 C 10.992188 39.933594 11 40.265625 10.71875 41.3125 C 10.371094 42.605469 9.683594 44.4375 8.25 46.46875 L 7.21875 47.90625 L 9 47.9375 C 15.175781 47.964844 18.753906 43.90625 19.3125 43.25 C 21.136719 43.65625 23.035156 43.9375 25 43.9375 C 37.582031 43.9375 47.9375 35.074219 47.9375 24 C 47.9375 12.925781 37.582031 4.0625 25 4.0625 Z M 25 5.9375 C 36.714844 5.9375 46.0625 14.089844 46.0625 24 C 46.0625 33.910156 36.714844 42.0625 25 42.0625 C 22.996094 42.0625 21.050781 41.820313 19.21875 41.375 L 18.65625 41.25 L 18.28125 41.71875 C 18.28125 41.71875 15.390625 44.976563 10.78125 45.75 C 11.613281 44.257813 12.246094 42.871094 12.53125 41.8125 C 12.929688 40.332031 12.9375 39.3125 12.9375 39.3125 L 12.9375 38.8125 L 12.5 38.53125 C 7.273438 35.21875 3.9375 29.941406 3.9375 24 C 3.9375 14.089844 13.28125 5.9375 25 5.9375 Z"></path>
-</svg>
-
+                            <span class="action-icon-svg" title="Comment">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                                </svg>
+                            </span>
                         </a>
-                    </div>
+                        
+                        </div>
                 </section>
 
                 <div class="post-info">
@@ -243,14 +233,6 @@
                         {% endif %}
                     </div> 
                     
-                    {% if post.comments.count > 0 %}
-                        <div class="post-comments-count">
-                            <a href="{% url 'posts:post_detail' post.pk %}" style="color: inherit; text-decoration: none;">
-                                Barcha {{ post.comments.count }} ta sharhni ko'rish
-                            </a>
-                        </div>
-                    {% endif %}
-
                     <div class="post-caption-block">
                         <span class="post-caption-username">{{ post.author.username }}</span> 
                         {{ post.caption|safe }}
@@ -261,16 +243,25 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    
+                    {% if post.comments.count > 0 %}
+                        <div class="post-comments-count" style="margin-top: 5px;">
+                            <a href="{% url 'posts:post_detail' post.pk %}" style="color: inherit; text-decoration: none;">
+                                Barcha {{ post.comments.count }} ta sharhni ko'rish
+                            </a>
+                        </div>
+                    {% endif %}
 
+                    <div class="post-timestamp">
+                        {{ post.created_at|date:"F j" }}
                     </div>
 
-                
+                </div>
 
             </article>
         {% empty %}
-            <p>Hozircha lentada hech qanday post mavjud emas.</p>
+            <p style="text-align:center; margin-top: 50px; color: #fff;">Hozircha lentada hech qanday post mavjud emas.</p>
         {% endfor %}
-
 
     </div>
     
@@ -296,7 +287,7 @@ const csrftoken = getCookie('csrftoken');
 document.querySelectorAll('.like-toggle').forEach(button => {
     button.addEventListener('click', () => {
         const postPk = button.dataset.postPk;
-        const svg = button.querySelector('svg');  // SVG ichidagi path bilan ishlaymiz
+        const svg = button.querySelector('svg');
         const liked = button.dataset.liked === 'yes';
 
         fetch(`/posts/${postPk}/like/`, {
@@ -310,17 +301,22 @@ document.querySelectorAll('.like-toggle').forEach(button => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // SVG rangini oq ↔ qizil almashish
                 if (liked) {
-                    // unlike → oq outline
+                    // UNLIKE HOLATI: OPPOQ (#ffffff) bo'lishi kerak
                     svg.setAttribute('fill', 'none');
-                    svg.setAttribute('stroke', 'white');
+                    svg.setAttribute('stroke', '#ffffff'); // <-- OQ RANG
                     button.dataset.liked = 'no';
+                    
+                    // SVG Path ni "bo'sh yurak" shakliga qaytarish
+                    svg.innerHTML = '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>';
                 } else {
-                    // like → qizil
-                    svg.setAttribute('fill', '#ed4956');
-                    svg.removeAttribute('stroke');
+                    // LIKE HOLATI: QIZIL (#ff3040) bo'lishi kerak
+                    svg.setAttribute('fill', '#ff3040');
+                    svg.setAttribute('stroke', 'none');
                     button.dataset.liked = 'yes';
+                    
+                    // SVG Path ni "to'la yurak" shakliga o'tkazish
+                    svg.innerHTML = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
                 }
 
                 // like sonini yangilash
@@ -334,14 +330,10 @@ document.querySelectorAll('.like-toggle').forEach(button => {
         })
         .catch(error => {
             console.error('Like AJAX xato:', error);
-            alert('Server bilan bog\'lanishda xato yuz berdi.');
         });
     });
 });
 {% endif %}
 </script>
 
-
 {% endblock content %}
-    
-  
