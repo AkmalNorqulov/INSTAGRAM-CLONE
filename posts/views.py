@@ -42,35 +42,46 @@ class PostDetailView(LoginRequiredMixin,DetailView):
 # Comment
 @require_POST
 def add_comment(request, pk):
-    """
-    Berilgan postga (pk) yangi sharh qo'shadi. 
-    POST so'rovini qabul qiladi (odatiy AJAX chaqiruvi).
-    """
-    # 1. Postni topish
     post = get_object_or_404(InstagramPost, pk=pk)
-
-    # 2. Foydalanuvchi tekshiruvi
-    if not request.user.is_authenticated:
-        return JsonResponse({'success': False, 'error': 'Avtorizatsiyadan o\'ting.'}, status=401)
-        
-    # 3. POST ma'lumotlarini olish
+    
+    # ... (user check) ...
+    
     try:
-        # Ajax orqali JSON formatida kelayotgan bo'lishi mumkin
         data = json.loads(request.body)
         comment_text = data.get('text', '').strip()
+        parent_id = data.get('parent_id', None) # Frontenddan parent_id keladimi?
     except:
-        # Agar oddiy POST data bo'lsa (kamdan kam)
-        comment_text = request.POST.get('text', '').strip()
+        return JsonResponse({'success': False, 'error': 'Xato ma\'lumot'}, status=400)
 
     if not comment_text:
-        return JsonResponse({'success': False, 'error': 'Sharh matni bo\'sh bo\'lishi mumkin emas.'}, status=400)
+        return JsonResponse({'success': False, 'error': 'Bo\'sh sharh'}, status=400)
     
-    # 4. Sharhni bazaga saqlash
+    # Ota sharhni aniqlash
+    parent_comment = None
+    if parent_id:
+        try:
+            parent_comment = Comment.objects.get(id=parent_id)
+        except Comment.DoesNotExist:
+            pass
+
+    # Sharh yaratish
     new_comment = Comment.objects.create(
         post=post,
         author=request.user,
-        text=comment_text
+        text=comment_text,
+        parent=parent_comment # Agar javob bo'lsa, ota sharh ulanadi
     )
+    
+    return JsonResponse({
+        'success': True,
+        'comment': {
+            'author_username': new_comment.author.username,
+            'text': new_comment.text,
+            # Avatar URLini ham qo'shish kerak (yoki default)
+            'avatar_url': new_comment.author.profile.avatar.url if hasattr(new_comment.author, 'profile') and new_comment.author.profile.avatar else "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+            'parent_id': parent_id
+        }
+    })
     
     # 5. Muvaffaqiyatli javobni qaytarish (Sharhni frontendda ko'rsatish uchun)
     return JsonResponse({
@@ -139,7 +150,7 @@ def post_create(request):
             
             new_post.save()
             
-            return redirect('post_list') 
+            return redirect('posts:post_list') 
     else:
         # YANGI FORMA KLASSIDAN FOYDALANAMIZ
         form = InstagramPostCreateForm()
