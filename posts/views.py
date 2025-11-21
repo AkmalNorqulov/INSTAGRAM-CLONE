@@ -43,46 +43,57 @@ class PostDetailView(LoginRequiredMixin,DetailView):
 @require_POST
 def add_comment(request, pk):
     """
-    Berilgan postga (pk) yangi sharh qo'shadi. 
-    POST so'rovini qabul qiladi (odatiy AJAX chaqiruvi).
+    Postga sharh yoki javob (reply) qo'shish funksiyasi (AJAX).
     """
-    # 1. Postni topish
     post = get_object_or_404(InstagramPost, pk=pk)
-
-    # 2. Foydalanuvchi tekshiruvi
-    if not request.user.is_authenticated:
-        return JsonResponse({'success': False, 'error': 'Avtorizatsiyadan o\'ting.'}, status=401)
-        
-    # 3. POST ma'lumotlarini olish
+    
     try:
-        # Ajax orqali JSON formatida kelayotgan bo'lishi mumkin
+        # Frontenddan kelgan JSON ma'lumotni o'qiymiz
         data = json.loads(request.body)
         comment_text = data.get('text', '').strip()
-    except:
-        # Agar oddiy POST data bo'lsa (kamdan kam)
-        comment_text = request.POST.get('text', '').strip()
+        parent_id = data.get('parent_id', None) # Agar reply bo'lsa, ID keladi
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Noto‘g‘ri ma‘lumot formati.'}, status=400)
 
+    # Matn bo'sh emasligini tekshirish
     if not comment_text:
-        return JsonResponse({'success': False, 'error': 'Sharh matni bo\'sh bo\'lishi mumkin emas.'}, status=400)
+        return JsonResponse({'success': False, 'error': 'Sharh matni bo‘sh bo‘lishi mumkin emas.'}, status=400)
     
-    # 4. Sharhni bazaga saqlash
+    # Ota sharhni aniqlash (Reply uchun)
+    parent_comment = None
+    if parent_id:
+        try:
+            parent_comment = Comment.objects.get(id=parent_id)
+        except Comment.DoesNotExist:
+            pass # Agar ota sharh topilmasa, oddiy sharh sifatida qoladi
+
+    # Yangi sharh yaratish
     new_comment = Comment.objects.create(
         post=post,
         author=request.user,
-        text=comment_text
+        text=comment_text,
+        parent=parent_comment
     )
     
-    # 5. Muvaffaqiyatli javobni qaytarish (Sharhni frontendda ko'rsatish uchun)
+    # Foydalanuvchi avatarini to'g'ri olish (UserProfile modeliga moslab)
+    if request.user.profile_picture:
+        avatar_url = request.user.profile_picture.url
+    else:
+        # Default rasm
+        avatar_url = "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+
+    # Frontendga muvaffaqiyatli javob qaytarish
     return JsonResponse({
         'success': True,
         'comment': {
+            'id': new_comment.id,
             'author_username': new_comment.author.username,
             'text': new_comment.text,
-            'created_at': new_comment.created_at.strftime('%Y-%m-%d %H:%M'),
-            # Agar sizda avatar URL bo'lsa, uni ham qo'shishingiz mumkin
+            'avatar_url': avatar_url,
+            'created_at': new_comment.created_at.strftime('%B %d, %Y'), # Masalan: November 21, 2025
+            'parent_id': parent_id
         }
     })
-
 
 
 
