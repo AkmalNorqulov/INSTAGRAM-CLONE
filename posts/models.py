@@ -124,14 +124,6 @@ class Comment(models.Model):
         verbose_name="Yaratilgan Sana"
     )
 
-    parent = models.ForeignKey(
-        'self', 
-        null=True, 
-        blank=True, 
-        on_delete=models.CASCADE, 
-        related_name='replies' # javoblarni olish uchun nom
-    )
-    
 # Sharhni o'qish uchun qulay formatda qaytaradi 
     def __str__(self):
         return f"{self.author.username}: {self.text[:30]}"
