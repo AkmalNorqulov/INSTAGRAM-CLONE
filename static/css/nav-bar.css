@@ -140,10 +140,10 @@ body {
 }
 
 .profile-avatar {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    margin-right: 16px;
+    /* margin-right: 16px; */   
     flex-shrink: 0;
 }
 
