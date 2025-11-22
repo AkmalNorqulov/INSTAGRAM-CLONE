@@ -5,6 +5,45 @@
     box-sizing: border-box; 
 }
 
+/* --------------------------------------------------------------------------
+🚨 YANGI QO'SHILGAN KURSOR KODI 🚨
+--------------------------------------------------------------------------
+*/
+
+/* 1. Butun sayt uchun standart (default) kursorni o'rnatamiz */
+html {
+    /* MUHIM: Bu yerga OQ RANGDAGI ikonka faylingizga yo'lni yozing!
+       Masalan: '/static/images/hand-white.cur' 
+    */
+    cursor: url('/static/images/Background.svg'), auto ;
+ 
+    
+}
+
+/* 2. BARCHA bosiladigan (klikk) elementlar uchun ham
+   shu kursorni ishlatishga majburlaymiz.
+*/
+a,
+button,
+label[for],
+input[type="submit"],
+input[type="button"],
+select,
+.menu-link,         /* Sizning kodingizdan olindi */
+.dropdown-item,     /* Sizning kodingizdan olindi */
+.more-btn,          /* Sizning kodingizdan olindi */
+.meta-btn           /* Sizning kodingizdan olindi */
+{
+    /* MUHIM: Bu yerga ham OQ RANGDAGI ikonka faylingizga yo'lni yozing!
+       Masalan: '/static/images/hand-white.cur' 
+    */
+    cursor: url('/static/images/Background.svg'), pointer;
+    size: 20px;
+}
+
+/* --- KURSOR KODI TUGADI --- */
+
+
 :root {
     /* Define colors for light and dark modes (assuming dark mode sidebar) */
     --text-primary: #000000;      /* Typically used for main content/light elements */
@@ -80,7 +119,7 @@ body {
     padding: 12px;
     text-decoration: none;
     border-radius: 8px;
-    cursor: pointer;
+    /* cursor: pointer; <-- BU QATORNI O'CHIRDIK, CHUNKI TEPADA QO'SHDIK */
     transition: background-color 0.2s ease, transform 0.1s ease;
     position: relative;
     border: none;

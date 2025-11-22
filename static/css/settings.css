@@ -6,11 +6,36 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #000000;
+  background-color: #000000 !important; 
   color: #ffffff;
   line-height: 1.5;
   min-height: 100vh;
 }
+
+html {
+  
+
+    cursor: url('/static/images/Background.svg'), auto ;
+ 
+    
+}
+
+
+a,
+button,
+label[for],
+input[type="submit"],
+input[type="button"],
+select,
+.menu-link,         
+.dropdown-item,     
+.more-btn,          
+.meta-btn           
+{
+    cursor: url('/static/images/Background.svg'), pointer;
+  
+}
+
 
 .settings-container {
   max-width: 630px;
