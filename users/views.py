@@ -5,8 +5,8 @@ from .models import UserProfile
 from .forms import CustomUserCreationForm, CustomUserLoginForm, UserProfileUpdateForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 # Register qismi uchun qilingan class va funksiya
 
@@ -52,14 +52,26 @@ class LogoutView(View):
         return redirect('users:login')
 
 
-# Profile qismi uchun qilingan classs
 
+
+@method_decorator(login_required, name='dispatch') 
 class ProfileView(View):
     def get(self, request):
+      
         profile = request.user
-        return render(request, 'users/profile.html', {'profile': profile})
-
-
+        
+    
+        post_count = profile.instagram_posts.count()
+        
+    
+        context = {
+            'profile': profile,
+            'post_count': post_count,
+          
+        }
+        
+      
+        return render(request, 'users/profile.html', context)
 
 # Profile Update qismi uchun zilingan class va funksiya 
 
