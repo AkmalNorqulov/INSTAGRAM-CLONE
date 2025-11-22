@@ -169,7 +169,7 @@
                     </div> 
                     
                     <div>
-                        <a href="#" class="post-header-username">{{ post.author.username }}</a>
+                        <a href="{% url 'users:user_profile' post.author.username %}" class="post-header-username">{{ post.author.username }}</a>
                     </div>
                 </header>
 

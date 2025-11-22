@@ -196,7 +196,7 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" alt="default">
                     {% endif %}
                 </div>
-                <a href="#" class="post-header-username">{{ post.author.username }}</a>
+                <a href="{% url 'users:user_profile' post.author.username %}" class="post-header-username">{{ post.author.username }}</a>
             </header>
             
             <section class="comments-section" id="comments-list">
@@ -212,7 +212,7 @@
                         </div>
                         <div class="comment-content">
                             <div class="comment-top-line">
-                                <span class="comment-username">{{ post.author.username }}</span>
+                                <a href="{% url 'users:user_profile' post.author.username %}" class="comment-username">{{ post.author.username }}</a>
                             </div>
                             <div class="comment-text">
                                 {{ post.caption }}
@@ -244,7 +244,7 @@
                                 </div>
                                 <div class="comment-content">
                                     <div class="comment-top-line">
-                                        <a href="#" class="comment-username">{{ comment.author.username }}</a>
+                                        <a href="{% url 'users:user_profile' comment.author.username %}" class="comment-username">{{ comment.author.username }}</a>
                                         <span class="reply-btn" onclick="replyToComment('{{ comment.id }}', '{{ comment.author.username }}')">Javob qaytarish</span>
                                     </div>
                                     <div class="comment-text">{{ comment.text }}</div>
@@ -264,7 +264,7 @@
                                             </div>
                                             <div class="comment-content">
                                                 <div class="comment-top-line">
-                                                    <a href="#" class="comment-username">{{ reply.author.username }}</a>
+                                                    <a href="{% url 'users:user_profile' reply.author.username %}" class="comment-username">{{ reply.author.username }}</a>
                                                 </div>
                                                 <div class="comment-text">{{ reply.text }}</div>
                                             </div>
