@@ -177,7 +177,6 @@
         <div class="profile-info">
             <div class="profile-header-top">
                 <h1>{{ profile.username }}</h1>
-                <button class="btn btn-primary">Follow</button>
             </div>
 
             <div class="profile-stats">
@@ -213,7 +212,11 @@
     </div>
 
     <div class="posts-grid">
-
+        {% for post in posts %}
+        <div class="post-item">
+            <a href="{% url 'posts:post_detail' post.pk %}"><img src="{{ post.image.url }}" alt="Post Image"></a>
+        </div>
+        {% endfor %}
     </div>
 </div>
 

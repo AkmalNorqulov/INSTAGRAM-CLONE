@@ -57,20 +57,14 @@ class LogoutView(View):
 @method_decorator(login_required, name='dispatch') 
 class ProfileView(View):
     def get(self, request):
-      
         profile = request.user
-        
-    
         post_count = profile.instagram_posts.count()
-        
-    
+        posts = profile.instagram_posts.all()
         context = {
             'profile': profile,
             'post_count': post_count,
-          
+            'posts': posts,
         }
-        
-      
         return render(request, 'users/profile.html', context)
 
 # Profile Update qismi uchun zilingan class va funksiya 
@@ -123,9 +117,12 @@ class MesagesView(View):
 class UserProfileView(View):
     def get(self, request, username):
         try:
+            if request.user.username == username:
+                return redirect('users:profile')
             profile = UserProfile.objects.get(username=username)
-            return render(request, 'users/user_profile.html', {'profile': profile})
+            post_count = profile.instagram_posts.count()
+            posts = profile.instagram_posts.all()
+            return render(request, 'users/user_profile.html', {'profile': profile, 'post_count': post_count, 'posts': posts})
         except UserProfile.DoesNotExist:
             message = "User not found."
             return render(request, 'users/user_profile.html', {'message': message})
-        
