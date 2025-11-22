@@ -3,7 +3,7 @@
 
 
 from django.urls import path
-from .views import RegisterView, LoginView, LogoutView, ProfileView, ProfileUpdateView , SettingsView , SearchView , MesagesView
+from .views import RegisterView, LoginView, LogoutView, ProfileView, UserProfileView, ProfileUpdateView , SettingsView , SearchView , MesagesView
 
 # Koda templateslar uchun qilingan url yo'larni
 #  aniq o'sah joyga chaqirib olish uchun qilingan app name
@@ -26,6 +26,7 @@ urlpatterns = [
     # Search qismi uchun qilingan url
     path('search/',SearchView.as_view(), name='search' ),
     # Mesages qismi uchun qilingan url
-    path('mesages/', MesagesView.as_view(), name='mesages')
-
+    path('mesages/', MesagesView.as_view(), name='mesages'),
+    # User Profile qismi uchun qilingan url
+    path('user/<str:username>/', UserProfileView.as_view(), name='user_profile'),
 ]

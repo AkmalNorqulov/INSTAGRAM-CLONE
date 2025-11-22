@@ -107,3 +107,13 @@ class MesagesView(View):
     def get(self,request):
         profile = request.user
         return render(request, 'users/mesages.html', {'profile':profile})
+
+class UserProfileView(View):
+    def get(self, request, username):
+        try:
+            profile = UserProfile.objects.get(username=username)
+            return render(request, 'users/user_profile.html', {'profile': profile})
+        except UserProfile.DoesNotExist:
+            message = "User not found."
+            return render(request, 'users/user_profile.html', {'message': message})
+        
