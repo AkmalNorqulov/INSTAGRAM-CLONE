@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Reel</h2>
+<video controls src="{{ reel.video.url }}" style="max-width:100%;"></video>
+<p>{{ reel.caption }}</p>
+<p>By {{ reel.user.username }} — {{ reel.created_at }}</p>
+<form method="post" action="{% url 'reels:like-toggle' reel.pk %}" id="like-form">
+{% csrf_token %}
+<button type="submit">Like ({{ reel.like_count }})</button>
+</form>
+{% endblock %}
