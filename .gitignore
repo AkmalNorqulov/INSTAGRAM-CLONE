@@ -1,2 +1,4 @@
 # Ignore Python bytecode cache directories
 __pycache__/
+media/
+static/

@@ -1,344 +1,259 @@
 {% extends 'base.html' %}
-{% load post_filters %} 
 {% load static %}
+{% load post_filters %}
 
-{% block title %}Instagram{% endblock title %}
+{% block title %}Instagram Feed{% endblock %}
 
 {% block content %}
-  <style>
-        /* --- DARK MODE STYLE --- */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #000000; /* Qora fon */
-            color: #ffffff; /* Oq matn */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
+<style>
+    /* Dark Mode */
+    body { background-color: #000; color: #fff; display: flex; justify-content: center; }
+    .feed-container { max-width: 470px; width: 100%; margin: 20px auto; padding-bottom: 50px; }
+    
+    .instagram-post { background-color: #000; border: 1px solid #363636; margin-bottom: 20px; border-radius: 8px; }
+    .post-header { display: flex; align-items: center; padding: 12px; }
+    
+    .post-header-avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; border: 1px solid #363636; overflow: hidden; }
+    .post-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .post-header-username { font-weight: 600; color: #fff; text-decoration: none; }
 
-        .feed-container {
-            max-width: 470px;
-            width: 100%;
-            margin: 20px auto;
-            padding-bottom: 50px;
-        }
+    /* MEDIA QISMI */
+    .post-media { 
+        width: 100%; 
+        background-color: #121212; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        overflow: hidden; 
+        border-top: 1px solid #363636; 
+        border-bottom: 1px solid #363636; 
+        position: relative; 
+    }
+    
+    .post-media img { width: 100%; height: auto; display: block; object-fit: cover; }
+    
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+    }
 
-        .instagram-post {
-            background-color: #000000;
-            border: 1px solid #363636; /* Har bir post tagida chiziq */
-            margin-bottom: 20px;
-            padding: 10px;
-            padding-bottom: 20px;
-            border-radius: 5px;
-        }
+    .video-wrapper video { 
+        width: 100%; 
+        max-height: 600px; 
+        object-fit: cover; 
+        display: block;
+    }
 
-        /* Header: Avatar + Username */
-        .post-header {
-            display: flex;
-            align-items: center;
-            padding: 12px 0; /* Yonlardan joy tashlamaymiz, container cheklaydi */
-        }
+    /* OVOZ TUGMASI */
+    .feed-mute-btn {
+        position: absolute;
+        bottom: 15px; 
+        left: 15px;
+        width: 26px;
+        height: 26px;
+        background-color: rgba(38, 38, 38, 0.8); 
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: transform 0.1s;
+    }
+    .feed-mute-btn:hover { transform: scale(1.1); }
+    .feed-mute-btn svg { width: 14px; height: 14px; fill: white; }
 
-        .post-header-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 12px;
-            overflow: hidden;
-            border: 1px solid #363636;
-            flex-shrink: 0;
-            cursor: url('/static/images/Background.svg'), auto ;
- 
-        }
+    .post-actions { padding: 10px 12px; display: flex; align-items: center; }
+    
+    .like-btn { cursor: pointer; margin-right: 16px; display: flex; align-items: center; }
+    .like-btn svg { width: 24px; height: 24px; transition: transform 0.1s; }
+    .like-btn:active svg { transform: scale(1.2); }
 
-        .post-header-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
+    .comment-btn { cursor: pointer; display: flex; align-items: center; }
+    .comment-btn svg { width: 24px; height: 24px; color: white; }
 
-        .post-header-username {
-            font-weight: 600;
-            font-size: 14px;
-            color: #ffffff;
-            text-decoration: none;
-        }
-        
-        /* Rasm Qismi */
-        .post-media {
-            width: 100%;
-            border-radius: 7px;
-            overflow: hidden;
-            /* border: 1px solid #363636; */
-        }
+    .post-likes { font-weight: bold; margin: 0 12px 5px; font-size: 14px; }
+    .post-caption { padding: 0 12px 10px; font-size: 14px; line-height: 1.4; }
+    .caption-username { font-weight: bold; margin-right: 5px; text-decoration: none; color: #fff; }
+    
+    .post-time { font-size: 10px; color: #a8a8a8; text-transform: uppercase; margin-left: 12px; margin-bottom: 12px; }
+</style>
 
-        .post-media img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover; 
-        }
-
-        /* Ikonkalar */
-        .post-actions {
-            padding: 12px 0 8px 0;
-        }
-        
-        .post-actions-icons {
-            display: flex;
-            align-items: center;
-        }
-        
-        .action-icon-svg { 
-            margin-right: 16px; 
-            cursor: pointer; 
-            color: #ffffff;
-            transition: transform 0.1s;
-        }
-        
-        .action-icon-svg:hover { opacity: 0.7; }
-        .action-icon-svg:active { transform: scale(1.2); }
-        
-        /* Ma'lumotlar */
-        .post-info {
-            font-size: 14px;
-        }
-
-        .post-likes {
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-            color: #ffffff;
-        }
-        
-        .post-caption-block {
-             margin-bottom: 8px;
-        }
-        
-        .post-caption-text {
-            line-height: 18px;
-            color: #ffffff;
-        }
-        
-        .post-caption-username {
-            font-weight: 600;
-            margin-right: 6px;
-            color: #ffffff;
-            text-decoration: none;
-        }
-        
-        .hashtag {
-            color: #e0f1ff;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .post-comments-count { 
-            color: #a8a8a8; /* Kulrang */
-            margin-bottom: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-        }
-
-        .post-timestamp {
-            font-size: 12px;
-            color: #a8a8a8;
-            text-transform: uppercase;
-        }
-
-        .action-icon-svg{
-               cursor: url('/static/images/Background.svg'), auto ;
-        }
-
-    </style>
-
-
-    <div class="feed-container">
-
-        {% for post in posts %}
+<div class="feed-container">
+    {% for post in posts %}
+        {% is_post_liked post as is_liked %}
+        <article class="instagram-post">
             
-            {% is_post_liked post as is_liked %} 
-
-            <article class="instagram-post">
-                
-                <header class="post-header">
-                    <div class="post-header-avatar">
-                        {% if post.author.profile_picture %}
-                            <img src="{{ post.author.profile_picture.url }}" alt="{{ post.author.username }}">
-                        {% else %}
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" alt="default user">
-                        {% endif %}
-                    </div> 
-                    
-                    <div>
-                        <a href="{% url 'users:user_profile' post.author.username %}" class="post-header-username">{{ post.author.username }}</a>
-                    </div>
-                </header>
-
-                <div class="post-media">
-                    <a href="{% url 'posts:post_detail' post.pk %}">
-                        {% if post.image and not post.video %}
-                            <img src="{{ post.image.url }}" alt="Post image">
-                        {% elif post.video and not post.image %}
-                            <video width="100%" controls>
-                                <source src="{{ post.video.url }}" type="video/mp4">
-                                Sizning brauzeringiz video tegini qo'llab-quvvatlamaydi.
-                            </video>
-                        {% endif %}
-                    </a>
+            <header class="post-header">
+                <div class="post-header-avatar">
+                    {% if post.author.profile_picture %}
+                        <img src="{{ post.author.profile_picture.url }}">
+                    {% else %}
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg">
+                    {% endif %}
                 </div>
+                <a href="#" class="post-header-username">{{ post.author.username }}</a>
+            </header>
 
-                <section class="post-actions">
-                    <div class="post-actions-icons">
-                        
-                        {% if user.is_authenticated %}
-                            <span 
-                                class="action-icon-svg like-toggle" 
-                                id="like-icon-{{ post.pk }}"
-                                data-post-pk="{{ post.pk }}"
-                                data-liked="{% if is_liked %}yes{% else %}no{% endif %}" 
-                                title="Like"
-                                
-                            >
-                                {% if is_liked %}
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ff3040" stroke="none">
-                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                    </svg>
-                                {% else %}
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                {% endif %}
-                            </span>
-                        {% else %}
-                            <span class="action-icon-svg" title="Like">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                </svg>
-                            </span>
-                        {% endif %}
-
-                        <a href="{% url 'posts:post_detail' post.pk %}" style="text-decoration: none;">
-                            <span class="action-icon-svg" title="Comment" >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                                </svg>
-                            </span>
+            <div class="post-media">
+                {% if post.post_type == 'REEL' and post.video %}
+                    <div class="video-wrapper">
+                        <a href="{% url 'posts:post_detail' post.pk %}" style="display: block; width: 100%;">
+                            <video class="feed-video" src="{{ post.video.url }}" loop playsinline></video>
                         </a>
 
-                    </div>
-                </section>
-
-                <div class="post-info">
-                    
-                    <div class="post-likes" id="like-count-display-{{ post.pk }}">
-                        {% if post.likes.count > 0 %}
-                            {{ post.likes.count }} likes
-                        {% else %}
-                            0 likes
-                        {% endif %}
-                    </div> 
-                    
-                    <div class="post-caption-block">
-                        <div class="post-caption-text">
-                            <a href="#" class="post-caption-username">{{ post.author.username }}</a> 
-                            {{ post.caption|safe }}
-
-                            {% if post.hashtags %}
-                                {% for tag in post.hashtags|split_string:','|slice:":5" %}
-                                    <a href="#" class="hashtag">#{{ tag|remove_spaces }}</a>
-                                {% endfor %}
-                            {% endif %}
+                        <div class="feed-mute-btn" onclick="toggleFeedMute(event, this)">
+                            <svg class="icon-muted" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zM6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96V5.04zm7.854.606a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"/></svg>
+                            <svg class="icon-unmuted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zM6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96V5.04zm7.854.606a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"/></svg>
                         </div>
                     </div>
-                    
-                    {% if post.comments.count > 0 %}
-                        <a href="{% url 'posts:post_detail' post.pk %}" class="post-comments-count">
-                            Barcha {{ post.comments.count }} ta sharhni ko'rish
-                        </a>
+
+                {% elif post.image %}
+                    <a href="{% url 'posts:post_detail' post.pk %}" style="width: 100%; display: block;">
+                        <img src="{{ post.image.url }}">
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="post-actions">
+                <div class="like-btn" data-post-id="{{ post.pk }}">
+                    {% if is_liked %}
+                        <svg class="like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff3040" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.4 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    {% else %}
+                        <svg class="like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     {% endif %}
-
-                    <div class="post-timestamp">
-                        {{ post.created_at|date:"F j" }}
-                    </div>
-
                 </div>
 
-            </article>
-        {% empty %}
-            <p style="text-align:center; margin-top: 50px; color: #8e8e8e;">Hozircha lentada hech qanday post mavjud emas.</p>
-        {% endfor %}
+                <a href="{% url 'posts:post_detail' post.pk %}" class="comment-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                </a>
+            </div>
 
-    </div>
-    
-    <script>
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
+            <div class="post-likes" id="like-count-{{ post.pk }}">{{ post.likes.count }} likes</div>
+            
+            <div class="post-caption">
+                <a href="#" class="caption-username">{{ post.author.username }}</a>
+                {{ post.caption|truncatechars:100 }}
+            </div>
+            <div class="post-time">{{ post.created_at|date:"F j" }}</div>
+        </article>
+    {% empty %}
+        <p style="text-align:center; color: #8e8e8e; margin-top: 50px;">Hozircha postlar yo'q.</p>
+    {% endfor %}
+</div>
+
+<script>
+    function getCookie(name) {
+        let v = null;
+        if (document.cookie && document.cookie !== '') {
+            const c = document.cookie.split(';');
+            for (let i = 0; i < c.length; i++) {
+                const cookie = c[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    v = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
                 }
             }
-            return cookieValue;
         }
-        const csrftoken = getCookie('csrftoken');
+        return v;
+    }
+    const csrftoken = getCookie('csrftoken');
 
-        {% if user.is_authenticated %}
-        document.querySelectorAll('.like-toggle').forEach(button => {
-            button.addEventListener('click', () => {
-                const postPk = button.dataset.postPk;
-                const svg = button.querySelector('svg');
-                const liked = button.dataset.liked === 'yes';
+    // 1. VIDEO AUTOPLAY (Aqlli)
+    document.addEventListener("DOMContentLoaded", function() {
+        const videos = document.querySelectorAll('.feed-video');
+        
+        let observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                
+                if (entry.isIntersecting) {
+                    // Ekranga chiqqanda
+                    video.muted = false; // 1. Ovozni yoqishga urinamiz
+                    
+                    var playPromise = video.play();
 
-                fetch(`/posts/${postPk}/like/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Ro'yxatda (List Page) sahifani reload qilmasdan o'zgartirish chiroyliroq
-                        if (liked) {
-                            // UNLIKE: Oq Outline ga qaytish
-                            svg.setAttribute('fill', 'none');
-                            svg.setAttribute('stroke', '#ffffff'); // OQ
-                            button.dataset.liked = 'no';
-                            svg.innerHTML = '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>';
-                        } else {
-                            // LIKE: Qizilga o'zgarish
-                            svg.setAttribute('fill', '#ff3040');
-                            svg.setAttribute('stroke', 'none');
-                            button.dataset.liked = 'yes';
-                            svg.innerHTML = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
-                        }
-
-                        // Like sonini yangilash
-                        const likeCountDisplay = document.getElementById(`like-count-display-${postPk}`);
-                        if (likeCountDisplay) {
-                            likeCountDisplay.innerText = `${data.new_count} likes`;
-                        }
-                    } else if (data.error) {
-                        alert(data.error);
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            // Muvaffaqiyatli o'ynadi (Ovozli bo'lishi mumkin)
+                            updateIcon(video, false); // Ikonkani "Ovozli" qilish
+                        })
+                        .catch(error => {
+                            // Brauzer blokladi -> Ovozsiz o'ynatishga majburmiz
+                            video.muted = true;
+                            video.play();
+                            updateIcon(video, true); // Ikonkani "Ovozsiz" qilish
+                        });
                     }
-                })
-                .catch(error => {
-                    console.error('Like AJAX xato:', error);
-                });
+                } else {
+                    // Ekrandan ketsa
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        videos.forEach(video => observer.observe(video));
+    });
+
+    // Ikonkani yangilash funksiyasi
+    function updateIcon(video, isMuted) {
+        const wrapper = video.closest('.video-wrapper');
+        if(wrapper) {
+            const mutedIcon = wrapper.querySelector('.icon-muted');
+            const unmutedIcon = wrapper.querySelector('.icon-unmuted');
+            if(isMuted) {
+                mutedIcon.style.display = 'block';
+                unmutedIcon.style.display = 'none';
+            } else {
+                mutedIcon.style.display = 'none';
+                unmutedIcon.style.display = 'block';
+            }
+        }
+    }
+
+    // 2. MUTE/UNMUTE BOSILGANDA
+    window.toggleFeedMute = function(event, btn) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const wrapper = btn.closest('.video-wrapper');
+        const video = wrapper.querySelector('video');
+        
+        video.muted = !video.muted; // Ovozni almashtirish
+        updateIcon(video, video.muted);
+    };
+
+    // 3. LIKE AJAX
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const postId = this.dataset.postId;
+            const svg = this.querySelector('.like-icon');
+            const countSpan = document.getElementById(`like-count-${postId}`);
+
+            fetch(`/posts/${postId}/like/`, { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if(countSpan) countSpan.innerText = data.new_count + ' likes';
+                    if (data.liked) {
+                        svg.setAttribute('fill', '#ff3040'); svg.setAttribute('stroke', 'none');
+                        svg.innerHTML = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.4 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
+                    } else {
+                        svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'white');
+                        svg.innerHTML = '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>';
+                    }
+                }
             });
         });
-        {% endif %}
-    </script>
-
-{% endblock content %}
+    });
+</script>
+{% endblock %}

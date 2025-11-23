@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yangi Reel Yuklash{% endblock %}
+
+{% block content %}
+<style>
+    /* --- PAGE LAYOUT --- */
+    body {
+        background-color: #fafafa;
+    }
+    
+    .upload-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: #fff;
+        border: 1px solid #dbdbdb;
+        border-radius: 8px;
+        display: flex;
+        overflow: hidden;
+        height: 600px; /* Balandlikni cheklaymiz */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* --- CHAP TOMON: VIDEO PREVIEW (9:16 Format) --- */
+    .preview-section {
+        flex: 1.2; /* Kengroq joy */
+        background-color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-right: 1px solid #dbdbdb;
+    }
+
+    #video-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Video kesilmasdan ko'rinadi */
+        display: none; /* Boshida yashirin */
+    }
+
+    /* Drag & Drop Zone */
+    .upload-placeholder {
+        text-align: center;
+        color: #fff;
+        padding: 20px;
+    }
+    
+    .upload-icon svg {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+        fill: #fff;
+    }
+
+    .select-btn {
+        background-color: #0095f6;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 15px;
+        display: inline-block;
+    }
+
+    /* --- O'NG TOMON: FORM INPUTS --- */
+    .form-section {
+        flex: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-header {
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #262626;
+        border-bottom: 1px solid #efefef;
+        padding-bottom: 10px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #efefef;
+        margin-right: 10px;
+        overflow: hidden;
+    }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .username { font-weight: 600; font-size: 14px; }
+
+    /* Form elementlari */
+    .caption-input {
+        width: 100%;
+        border: none;
+        resize: none;
+        outline: none;
+        font-size: 14px;
+        min-height: 150px;
+        font-family: inherit;
+    }
+
+    .meta-inputs {
+        margin-top: auto; /* Pastga tushirish */
+        border-top: 1px solid #efefef;
+        padding-top: 15px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        background-color: #0095f6;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        opacity: 0.5; /* Video tanlanmaguncha o'chiq */
+        pointer-events: none;
+    }
+    
+    .submit-btn.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    /* Yashirin input */
+    #id_video { display: none; }
+
+    /* Yuklanmoqda animatsiyasi */
+    .loading-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 100;
+        display: none;
+    }
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #0095f6;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .upload-container { flex-direction: column; height: auto; margin: 0; border: none; }
+        .preview-section { height: 400px; }
+        .form-section { height: auto; }
+    }
+</style>
+
+<div class="upload-container">
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 10px; font-weight: 600;">Yuklanmoqda...</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="reel-form" style="display: contents;">
+        {% csrf_token %}
+
+        <div class="preview-section" id="drop-zone">
+            <video id="video-preview" controls autoplay muted loop playsinline></video>
+            
+            <div class="upload-placeholder" id="placeholder">
+                <div class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+                </div>
+                <h3>Video va Reellarni bu yerga tashlang</h3>
+                <label for="id_video" class="select-btn">Kompyuterdan tanlash</label>
+                {{ form.video }} 
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-header">Yangi Reel</div>
+            
+            <div class="user-info">
+                <div class="user-avatar">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg">
+                    {% endif %}
+                </div>
+                <span class="username">{{ user.username }}</span>
+            </div>
+
+            {{ form.caption }}
+
+            <div class="meta-inputs">
+                <button type="submit" class="submit-btn" id="submit-btn">Bo'lishish</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('id_video');
+    const videoPreview = document.getElementById('video-preview');
+    const placeholder = document.getElementById('placeholder');
+    const submitBtn = document.getElementById('submit-btn');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const form = document.getElementById('reel-form');
+
+    // 1. VIDEO TANLANGANDA PREVIEW QILISH
+    fileInput.addEventListener('change', function(event) {
+        handleFiles(event.target.files);
+    });
+
+    // 2. DRAG & DROP LOGIKASI
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.opacity = '0.7';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.opacity = '1';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.opacity = '1';
+        fileInput.files = e.dataTransfer.files; // Faylni inputga biriktirish
+        handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const file = files[0];
+            
+            // Faqat video ekanligini tekshirish
+            if (!file.type.startsWith('video/')) {
+                alert("Iltimos, faqat video fayl yuklang!");
+                return;
+            }
+
+            // Videoni o'qib preview qilish
+            const fileURL = URL.createObjectURL(file);
+            videoPreview.src = fileURL;
+            
+            // Dizaynni o'zgartirish
+            placeholder.style.display = 'none';
+            videoPreview.style.display = 'block';
+            submitBtn.classList.add('active'); // Tugmani yoqish
+        }
+    }
+
+    // 3. FORM YUBORILGANDA LOADING CHIQARISH
+    form.addEventListener('submit', function() {
+        loadingOverlay.style.display = 'flex';
+        submitBtn.innerText = "Yuklanmoqda...";
+    });
+</script>
+
+{% endblock content %}

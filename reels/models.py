@@ -1,24 +1,41 @@
 from django.db import models
-from django.conf import settings
+from posts.models import InstagramPost  # Asosiy modelni import qilamiz
+
+# --- CUSTOM MANAGER ---
+class ReelManager(models.Manager):
+    """
+    Bu menejer faqat 'REEL' turidagi postlarni filtrlab beradi.
+    Reel.objects.all() chaqirilganda rasm postlar aralashib ketmaydi.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(post_type='REEL')
 
 
-class Reel(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reels')
-    video = models.FileField(upload_to='reels/videos/')
-    caption = models.TextField(blank=True)
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_reels', blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+# --- PROXY MODEL ---
+class Reel(InstagramPost):
+    """
+    Reel modeli.
+    
+    DIQQAT: 
+    1. Bu model ma'lumotlar bazasida yangi jadval YARATMAYDI (proxy=True).
+    2. U 'posts_instagrampost' jadvalidagi ma'lumotlardan foydalanadi.
+    3. Video, Caption, Author kabi maydonlar 'InstagramPost' dan meros olinadi.
+    """
+    
+    # Maxsus menejerni ulaymiz
+    objects = ReelManager()
 
     class Meta:
-        ordering = ['-created_at']
+        proxy = True  # <--- BU ENG MUHIM QISM. Jadval yaratilmaydi.
+        verbose_name = "Reel"
+        verbose_name_plural = "Reels"
+        # ordering = ['-created_at'] # Asosiy modeldan meros oladi
 
-    def __str__(self):
-        return f"Reel {self.id} by {self.user}"
-
-    def like_count(self):
-        return self.likes.count()
-
-    def is_liked_by(self, user):
-        if not user.is_authenticated:
-            return False
-        return self.likes.filter(pk=user.pk).exists()
+    def save(self, *args, **kwargs):
+        """
+        Agar shu model orqali saqlasak, 
+        post_type avtomatik 'REEL' bo'lib saqlanadi.
+        """
+        if not self.pk:  # Agar yangi yaratilayotgan bo'lsa
+            self.post_type = 'REEL'
+        super().save(*args, **kwargs)

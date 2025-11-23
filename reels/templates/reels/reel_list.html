@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reels Feed{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+
+<style>
+    /* --- 1. ASOSIY LAYOUT --- */
+    body { margin: 0; padding: 0; background-color: #000; color: #fff; overflow: hidden; }
+    .navbar { display: none !important; } 
+
+    .reels-feed-container {
+        height: 100vh; 
+        width: 100%;
+        max-width: 480px; 
+        margin: 0 auto; 
+        overflow-y: scroll; 
+        scroll-snap-type: y mandatory; 
+        scroll-behavior: smooth; 
+        scrollbar-width: none; 
+        position: relative;
+    }
+    .reels-feed-container::-webkit-scrollbar { display: none; }
+
+    /* --- 2. REEL ITEM --- */
+    .reel-item {
+        position: relative;
+        width: 100%;
+        height: 100vh; 
+        flex-shrink: 0;
+        scroll-snap-align: start; 
+        scroll-snap-stop: always;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-right: 1px solid #262626;
+        border-left: 1px solid #262626;
+        overflow: hidden;
+    }
+
+    .reel-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; 
+        cursor: pointer;
+    }
+
+    /* --- 3. MUTE BUTTON --- */
+    .mute-btn-top {
+        position: absolute; top: 20px; right: 20px;
+        background: rgba(0, 0, 0, 0.5); width: 32px; height: 32px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; z-index: 20; transition: background 0.2s;
+    }
+    .mute-btn-top:hover { background: rgba(255, 255, 255, 0.2); }
+    .mute-btn-top svg { width: 16px; height: 16px; fill: white; }
+
+    /* --- 4. NAVIGATSIYA --- */
+    .nav-controls {
+        position: fixed; right: calc(50% - 300px); top: 50%; transform: translateY(-50%);
+        display: flex; flex-direction: column; gap: 15px; z-index: 50;
+    }
+    @media (max-width: 650px) { .nav-controls { right: 10px; top: 40%; } }
+    .nav-btn { width: 40px; height: 40px; background-color: rgba(38, 38, 38, 0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+    .nav-btn.hidden { display: none; opacity: 0; pointer-events: none; }
+
+    /* --- 5. INFO OVERLAY --- */
+    .reel-gradient-overlay {
+        position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        z-index: 5; pointer-events: none;
+    }
+    .reel-info {
+        position: absolute; bottom: 20px; left: 15px; width: 75%;
+        z-index: 10; text-shadow: 0 1px 2px rgba(0,0,0,0.5); pointer-events: none; 
+    }
+    .reel-info * { pointer-events: auto; }
+    .user-row { display: flex; align-items: center; margin-bottom: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; border: 1px solid #fff; object-fit: cover; }
+    .username { font-weight: bold; font-size: 15px; text-decoration: none; color: #fff; margin-right: 10px; }
+    .follow-btn { border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 12px; cursor: pointer; }
+    
+    .caption-container { font-size: 14px; line-height: 1.4; color: #fff; cursor: pointer; margin-bottom: 8px; }
+    .caption-text { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; transition: all 0.3s ease; width: 100%; }
+    .caption-text.expanded { -webkit-line-clamp: unset; display: block; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 5px; }
+    .more-tag { color: #a8a8a8; font-weight: 600; font-size: 13px; margin-left: 5px; }
+
+    .music-row { font-size: 13px; display: flex; align-items: center; margin-top: 8px; }
+    .music-icon { margin-right: 5px; flex-shrink: 0; width: 12px; height: 12px; fill: white; }
+    .music-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90%; }
+
+    /* --- 6. ACTIONS --- */
+    .reel-actions {
+        position: absolute; bottom: 20px; right: 10px;
+        display: flex; flex-direction: column; align-items: center;
+        z-index: 15; padding-bottom: 50px; 
+    }
+    .action-btn { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; cursor: pointer; }
+    .action-btn svg { width: 28px; height: 28px; margin-bottom: 5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: transform 0.1s; }
+    .action-btn:active svg { transform: scale(1.2); }
+    .action-count { font-size: 13px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+    .play-icon-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 4; }
+</style>
+
+<div class="nav-controls">
+    <div class="nav-btn hidden" id="btnUp" onclick="scrollReel('up')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/></svg>
+    </div>
+    <div class="nav-btn" id="btnDown" onclick="scrollReel('down')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
+    </div>
+</div>
+
+<div class="reels-feed-container" id="feedContainer">
+    {% for reel in reels %}
+    <div class="reel-item" data-reel-id="{{ reel.pk }}">
+        
+        <div class="mute-btn-top" onclick="toggleMute(this)">
+            <svg class="icon-muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zM6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96V5.04zm7.854.606a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"/></svg>
+            <svg class="icon-unmuted" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg>
+        </div>
+
+        <video class="reel-video" src="{{ reel.video.url }}" loop muted playsinline onclick="togglePlay(this)"></video>
+
+        <div class="play-icon-overlay">
+            <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="white" style="opacity: 0.8;" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/></svg>
+        </div>
+
+        <div class="reel-gradient-overlay"></div>
+
+        <div class="reel-info">
+            <div class="user-row">
+                {% if reel.author.profile_picture %}
+                    <img src="{{ reel.author.profile_picture.url }}" class="user-avatar">
+                {% else %}
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" class="user-avatar">
+                {% endif %}
+                <a href="#" class="username">{{ reel.author.username }}</a>
+                <button class="follow-btn">Follow</button>
+            </div>
+            
+            <div class="caption-container" onclick="toggleCaption(this)">
+                <div class="caption-text">
+                    <span style="margin-right: 5px;">{{ reel.caption }}</span>
+                    {% if reel.hashtags %}
+                        <span style="color:#e0f1ff;">{{ reel.hashtags }}</span>
+                    {% endif %}
+                </div>
+                {% if reel.caption|length > 35 %}
+                    <span class="more-tag">... ko‘proq</span>
+                {% endif %}
+            </div>
+            
+            <div class="music-row">
+                <svg class="music-icon" viewBox="0 0 16 16"><path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2z"/><path fill-rule="evenodd" d="M9 3v10H8V3h1z"/><path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/></svg>
+                <span class="music-text">Original Audio • {{ reel.author.username }}</span>
+            </div>
+        </div>
+
+        <div class="reel-actions">
+            <div class="action-btn like-btn" data-reel-id="{{ reel.pk }}">
+                {% if request.user in reel.likes.all %}
+                    <svg class="like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff3040" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.4 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                {% else %}
+                    <svg class="like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                {% endif %}
+                <span class="action-count like-count">{{ reel.likes.count }}</span>
+            </div>
+
+            <div class="action-btn" onclick="window.location.href='{% url 'reels:reel_detail' reel.pk %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                <span class="action-count">{{ reel.comments.count }}</span>
+            </div>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    function getCookie(name) {
+        let v = null;
+        if (document.cookie && document.cookie !== '') {
+            const c = document.cookie.split(';');
+            for (let i = 0; i < c.length; i++) {
+                const cookie = c[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    v = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return v;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // --- GLOBAL STATE UCHUN O'ZGARUVCHI ---
+    let isGlobalMuted = true; // Boshida ovoz o'chiq bo'ladi
+
+    // 1. NAVIGATSIYA TUGMALARI
+    const reelItems = document.querySelectorAll('.reel-item');
+    const btnUp = document.getElementById('btnUp');
+    const btnDown = document.getElementById('btnDown');
+    let currentReelIndex = 0;
+
+    function updateNavButtons() {
+        if(btnUp) btnUp.classList.toggle('hidden', currentReelIndex === 0);
+        if(btnDown) btnDown.classList.toggle('hidden', currentReelIndex >= reelItems.length - 1);
+    }
+
+    window.scrollReel = function(direction) {
+        if (direction === 'up' && currentReelIndex > 0) {
+            reelItems[currentReelIndex - 1].scrollIntoView({ behavior: 'smooth' });
+        } else if (direction === 'down' && currentReelIndex < reelItems.length - 1) {
+            reelItems[currentReelIndex + 1].scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    // IKONKANI YANGILASH FUNKSIYASI
+    function updateMuteIcon(reelItem, isMuted) {
+        const mutedIcon = reelItem.querySelector('.icon-muted');
+        const unmutedIcon = reelItem.querySelector('.icon-unmuted');
+        
+        if (isMuted) {
+            mutedIcon.style.display = 'block';
+            unmutedIcon.style.display = 'none';
+        } else {
+            mutedIcon.style.display = 'none';
+            unmutedIcon.style.display = 'block';
+        }
+    }
+
+    // 2. OVOZ TUGMASI BOSILGANDA (Toggle Mute)
+    window.toggleMute = function(btn) {
+        // Tugma bosilganda global holatni o'zgartiramiz
+        isGlobalMuted = !isGlobalMuted;
+        
+        // Hozirgi videoga darhol qo'llaymiz
+        const parent = btn.closest('.reel-item');
+        const video = parent.querySelector('video');
+        
+        video.muted = isGlobalMuted;
+        updateMuteIcon(parent, isGlobalMuted);
+    };
+
+    // 3. AUTOPLAY (Observer)
+    document.addEventListener("DOMContentLoaded", function() {
+        updateNavButtons();
+        const videos = document.querySelectorAll('video');
+        
+        let observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                const parent = video.closest('.reel-item');
+
+                if (entry.isIntersecting) {
+                    // Ekranga kirganda GLOBAL holatni oladi
+                    video.muted = isGlobalMuted;
+                    updateMuteIcon(parent, isGlobalMuted);
+
+                    // O'ynatishga harakat qilamiz
+                    video.play().then(() => {
+                        // Muvaffaqiyatli o'ynadi
+                    }).catch(error => {
+                        // Brauzer bloklasa (Autoplay Policy), majburan ovozsiz qilamiz
+                        console.log("Autoplay with sound blocked by browser. Muting...");
+                        video.muted = true;
+                        updateMuteIcon(parent, true);
+                        video.play();
+                        // Global holatni ham vaqtincha ovozsiz qilmaymiz, 
+                        // faqat shu video uchun majburiy bo'ladi.
+                        // Lekin foydalanuvchi "click" qilsa, keyingilari ovozli bo'ladi.
+                    });
+
+                    // Index yangilash
+                    const index = Array.from(reelItems).indexOf(parent);
+                    if (index !== -1) { currentReelIndex = index; updateNavButtons(); }
+
+                } else {
+                    // Ekrandan ketsa
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            });
+        }, { threshold: 0.6 });
+
+        videos.forEach(video => {
+            observer.observe(video);
+        });
+    });
+
+    // 4. LIKE AJAX
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const reelId = this.dataset.reelId;
+            const svg = this.querySelector('.like-icon');
+            const countSpan = this.querySelector('.like-count');
+
+            fetch(`/posts/${reelId}/like/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    countSpan.innerText = data.new_count;
+                    if (data.liked) {
+                        svg.setAttribute('fill', '#ff3040'); svg.setAttribute('stroke', 'none');
+                        svg.innerHTML = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.4 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
+                    } else {
+                        svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'white');
+                        svg.innerHTML = '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>';
+                    }
+                }
+            });
+        });
+    });
+
+    // 5. CAPTION & PLAY TOGGLE
+    window.togglePlay = function(video) {
+        const overlay = video.parentElement.querySelector('.play-icon-overlay');
+        if (video.paused) { video.play(); overlay.style.opacity = '0'; }
+        else { video.pause(); overlay.style.opacity = '1'; }
+    };
+
+    window.toggleCaption = function(container) {
+        const text = container.querySelector('.caption-text');
+        const moreBtn = container.querySelector('.more-tag');
+        if (text.classList.contains('expanded')) {
+            text.classList.remove('expanded');
+            if(moreBtn) moreBtn.style.display = 'inline';
+        } else {
+            text.classList.add('expanded');
+            if(moreBtn) moreBtn.style.display = 'none';
+        }
+    };
+</script>
+{% endblock content %}
