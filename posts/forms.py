@@ -16,11 +16,13 @@ class InstagramPostCreateForm(forms.ModelForm):
     class Meta:
         model = InstagramPost
         # Muallif (author), created_at, updated_at Viewda avtomatik o'rnatiladi.
-        fields = ('image', 'caption', 'hashtags', 'location', 'post_type')
+        fields = ('image', 'video', 'caption', 'hashtags', 'location')
         
         widgets = {
             # Faqat rasmlarni qabul qilish
             'image': forms.FileInput(attrs={'accept': 'image/*'}), 
+            # Faqat videolarni qabul qilish
+            'video': forms.FileInput(attrs={'accept': 'video/*'}),
             
             # Joylashuv uchun oddiy text input
             'location': forms.TextInput(attrs={'placeholder': 'Joylashuv qo‘shish (ixtiyoriy)'}),
@@ -29,5 +31,5 @@ class InstagramPostCreateForm(forms.ModelForm):
             'hashtags': forms.TextInput(attrs={'placeholder': '#tag1, #tag2, #tag3 (vergul bilan ajrating)'}),
             
             # Post turi uchun tanlov maydoni Modelda belgilangan (ChoiceField avtomatik ishlaydi)
-            'post_type': forms.Select(attrs={'class': 'form-select'}), 
+            # 'post_type': forms.Select(attrs={'class': 'form-select'}), 
         }

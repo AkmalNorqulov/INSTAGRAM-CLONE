@@ -183,7 +183,14 @@
     <div class="detail-layout">
 
         <div class="media-column">
-            <img src="{{ post.image.url }}" alt="{{ post.caption|truncatechars:30 }}">
+            {% if post.image and not post.video %}
+                            <img src="{{ post.image.url }}" alt="Post image">
+                        {% elif post.video and not post.image %}
+                            <video width="100%" controls>
+                                <source src="{{ post.video.url }}" type="video/mp4">
+                    Sizning brauzeringiz video tegini qo'llab-quvvatlamaydi.
+                            </video>
+            {% endif %}
         </div>
 
         <div class="info-column">

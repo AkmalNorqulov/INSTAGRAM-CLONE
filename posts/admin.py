@@ -5,7 +5,7 @@ class InstagramPostAdmin(admin.ModelAdmin):
     """
     InstagramPost modelini admin panelda ko'rsatish uchun admin klassi.
     """
-    list_display = ('id', 'image', 'caption', 'created_at')  # Admin panelda ko'rsatiladigan ustunlar
+    list_display = ('id', 'caption', 'created_at')  # Admin panelda ko'rsatiladigan ustunlar
     search_fields = ('caption',)  # Qidiruv maydoni sifatida caption ustuni
     list_filter = ('created_at',)  # Filtrlash uchun yaratilgan ustun
 

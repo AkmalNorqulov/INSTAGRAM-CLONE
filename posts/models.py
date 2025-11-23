@@ -17,7 +17,15 @@ class InstagramPost(models.Model):
     # Rasm: Postning vizual komponenti
     image = models.ImageField(
         upload_to='instagram_posts/images/',
-        verbose_name="Post Rasmi"
+        verbose_name="Post Rasmi",
+        blank=True,
+        # null=True
+    )
+    video = models.FileField(
+        upload_to='instagram_posts/videos/',
+        blank=True,
+        # null=True,
+        verbose_name="Post Videosi"
     )
 
     # Sarlavha (Caption): Postning matnli qismi
@@ -51,18 +59,18 @@ class InstagramPost(models.Model):
         verbose_name="Muallif"
     )
 
-    # Post turi: Oddiy rasm, Karusel, yoki Reel
-    POST_CHOICES = [
-        ('IMAGE', 'Yagona Rasm'),
-        ('CAROUSEL', 'Karusel'),
-        ('REEL', 'Reel (Video)')
-    ]
-    post_type = models.CharField(
-        max_length=10,
-        choices=POST_CHOICES,
-        default='IMAGE',
-        verbose_name="Post Turi"
-    )
+    # # Post turi: Oddiy rasm, Karusel, yoki Reel
+    # POST_CHOICES = [
+    #     ('IMAGE', 'Yagona Rasm'),
+    #     ('CAROUSEL', 'Karusel'),
+    #     ('REEL', 'Reel (Video)')
+    # ]
+    # post_type = models.CharField(
+    #     max_length=10,
+    #     choices=POST_CHOICES,
+    #     default='IMAGE',
+    #     verbose_name="Post Turi"
+    # )
     
     # --- Metad ma'lumotlar ---
     

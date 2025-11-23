@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <style>
     /* Asosiy va Umumiy Stillar (Dark Mode uchun) */
@@ -20,6 +21,7 @@
     .create-modal {
         width: 100%;
         max-width: 900px;
+        /* 600px dan 900px ga o'zgartirildi */
         max-height: 600px;
         background-color: #262626;
         /* Modal fonini to'q kulrang qilish */
@@ -66,44 +68,135 @@
         cursor: default;
     }
 
-    /* Asosiy Kontent Qismi (Rasm + Forma) */
+    /* Asosiy Kontent Qismi (Media + Forma) */
     .modal-content {
         display: flex;
         flex-grow: 1;
         min-height: 0;
     }
 
-    /* 1. Rasm (Preview) Ustuni */
+    /* 1. Media (Preview/Selection) Ustuni - Combined Styles */
     .media-preview-column {
         flex: 2;
         display: flex;
-        justify-content: center;
+        flex-direction: column; /* Changed to column for stacking preview and controls */
+        justify-content: flex-start; /* Align content to the top */
         align-items: center;
         background-color: #000000;
-        /* Qora fon rasmlar uchun eng yaxshi */
+        /* Qora fon media uchun */
         min-height: 400px;
+        padding: 20px; /* Added padding */
     }
 
-    /* Rasm joylashmaganda ko'rinadigan qism */
-    .placeholder {
-        text-align: center;
-        color: #8e8e8e;
+    /* ** NEW STYLES: Placeholder/Card for Preview ** */
+    .media-placeholder-card {
+        width: 100%;
+        /* max-width: 400px; */ /* Removed max-width to use full column width */
+        height: 350px; /* Adjusted height */
         display: flex;
-        /* Elementlarni markazga joylash uchun */
         flex-direction: column;
+        justify-content: center;
         align-items: center;
+        border: 2px dashed #4a4a4a; /* Darker dashed border */
+        border-radius: 8px;
+        background-color: #121212; /* Darker background for the placeholder area */
+        overflow: hidden;
+        text-align: center;
+        margin-bottom: 15px; /* Space between preview and controls */
     }
 
     .placeholder-icon {
-        font-size: 50px;
-        margin-bottom: 10px;
+        width: 64px;
+        height: 64px;
+        opacity: 0.5;
     }
 
-    #image-preview {
+    .placeholder-text {
+        color: #8e8e8e;
+        margin-top: 10px;
+    }
+
+    /* Ensure dynamic image/video fits */
+    #media-preview-area img,
+    #media-preview-area video {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
     }
+    /* END NEW STYLES */
+
+
+    /* ** NEW STYLES: Input Controls (Buttons) ** */
+    .media-input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+        max-width: 300px; /* Limit width of control buttons */
+        margin-top: auto; /* Push controls to the bottom */
+    }
+
+    .input-group-title {
+        color: #ccc;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    /* Hide the default file inputs */
+    #id_image, #id_video {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+
+    /* Style the Label to look like a Button */
+    .custom-file-upload-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .custom-file-upload-btn i {
+        margin-right: 8px;
+    }
+
+    .image-btn {
+        background-color: #0095f6; /* Instagram Blue for selection */
+        color: white;
+    }
+
+    .image-btn:hover {
+        background-color: #0076c7;
+    }
+
+    .video-btn {
+        background-color: #c13584; /* A dark pink/purple for distinction */
+        color: white;
+    }
+
+    .video-btn:hover {
+        background-color: #a32b6e;
+    }
+
+    .choice-separator {
+        color: #8e8e8e;
+        font-style: italic;
+        margin: 5px 0;
+        font-size: 12px;
+    }
+    /* END NEW STYLES */
+
 
     /* 2. Forma (Ma'lumot) Ustuni */
     .form-column {
@@ -149,31 +242,7 @@
         /* Kirish maydonlari matni oq */
     }
 
-    /* File inputni yashirish va o'z tugmachasini yaratish */
-    #id_image {
-        display: none;
-    }
-
-    .custom-file-upload {
-        border: 1px solid #0095f6;
-        /* Chegarani Instagram ko'k rangida qilish */
-        display: inline-block;
-        padding: 8px 12px;
-        cursor: pointer;
-        border-radius: 4px;
-        background-color: #0095f6;
-        /* Tugma foni ko'k */
-        font-weight: 600;
-        color: white;
-        /* Tugma matni oq */
-        transition: background-color 0.2s;
-        margin-top: 15px;
-        /* Bo'shliq qo'shish */
-    }
-
-    .custom-file-upload:hover {
-        background-color: #0076c7;
-    }
+    /* Old custom-file-upload styles removed as they conflict with new button styles */
 
     /* Foydalanuvchi ma'lumotlari (Headerda) */
     .user-info {
@@ -199,6 +268,41 @@
         color: white;
         /* Username oq rangda */
     }
+    /* Container for input label and clear button */
+    .input-and-clear-group {
+        display: flex;
+        gap: 8px; /* Space between button and clear icon */
+        width: 100%;
+    }
+
+    .custom-file-upload-btn {
+        /* Ensure the upload button takes up available space */
+        flex-grow: 1; 
+    }
+
+    /* Style for the new clear button */
+    .clear-media-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        margin: 5px 0; /* Align height with the styled labels */
+        border: 1px solid #4a4a4a;
+        border-radius: 5px;
+        background-color: transparent;
+        color: #f44336; /* Red icon for delete/clear */
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+        /* Initially hide the button */
+        display: none; 
+    }
+
+    .clear-media-btn:hover {
+        background-color: #3d3d3d;
+    }
 </style>
 
 
@@ -211,25 +315,51 @@
         <header class="modal-header">
             <span style="visibility: hidden;">Bekor Qilish</span>
             <h2 style="color: white;"> Yangi Post</h2>
-            <button type="submit" class="post-btn" id="submit-post-btn" disabled
+            <button type="submit" class="post-btn" id="submit-post-btn"
                 style="color:#0095f6;">Bo'lishish</button>
         </header>
 
         <div class="modal-content">
 
             <div class="media-preview-column">
-                <img id="image-preview" src="" alt="Rasm yuklanmadi" style="display: none;">
+                
+                <div class="media-placeholder-card" id="media-placeholder-card">
+                    <img class="placeholder-icon" 
+                        id="media-preview-icon"
+                        width="64" height="64"
+                        src="{% static "images/upload.svg" %}">
+                    <p class="placeholder-text">Hozircha Hech narsa Tanlanmagan</p>
+                    
+                    <div id="media-preview-area">
+                        </div>
+                </div>
+                
+                <div class="media-input-group">
+                    <h4 class="input-group-title">Tanlov: Rasm yoki Video</h4>
 
-                <div class="placeholder" id="image-placeholder">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACSElEQVR4nO3au2sUURSA8Y2KD6IiiIUWYqGrhTY+Chsbe0FwCYKlYGNUBDtRq/hII/4DgqIWgtqZKFpGCxXsfKTw3Qgq+I6Sn4xsQJbJrDu72Z3H/eDCFveePeeb2dk7M6dSCQQCgUAgEAgEpgWzsQU7Ucv4iHLcjFmVToDdeC1/vMJAu8Ufkn8Opi1+LX7JPxOophFwRnE4lUbAbcVhNI2AMcVhLAhoFUGAIEBx6ImAmzhQH6NKJuBwTLwjSiJgDH0x8fpwv8OFZVLAUELMISUQcDYh5jklEPAc82PiLcC4klwEL6H/n1gLcVnJ/gbf4Up9RJ97SdgIVYKAFhEE6KWAn7iO4xjGvTIJeIJ1MfnswpeiC3iAZQk5Re8m3udFwLcW59/Fov/Iaz3eZFXAx/q7hL9HEStwDF+brLsWt3tMyG0VnmZNwDOsSThqL6ZZdwFzUuS3tIW7yxkXcAdLEmLNxY2YdcNxt84t5Li4/tPpqYDzUYEJcfox0rBmEifSFt4Qfx6u9kLAJI6mOE1/Y287RU/z9vpiNwX8wJ4m65fjccwGp9ZOsQnfV+umgH1N1lZjLnqfsb2dIrMkoJawLrriv22Y/wFb2y0y8wKwDZ8a5kbPAjZ0osgsCdgfM38Hvsfs61d2qsgm+Q52U8AEHtb37lMjrplivGHOTI1H9Zy6JiBvpBJwS3EYSSPgtOJwMo2AaoGapFa3LCAiajGTfwYr7YCBetNh3ngZPUZrq/gporZTbMpRq+zGjrXKBgKBQCAQCAQqxeQPd981umAyWH4AAAAASUVORK5CYII="
-                        alt="image">
-                    <p>Rasm tanlang</p>
+                    <div class="input-and-clear-group">
+                        <label for="{{ form.image.id_for_label }}" class="custom-file-upload-btn image-btn">
+                            Rasm Tanlang
+                        </label>
+                        {{ form.image }}
+                        
+                        <button type="button" class="clear-media-btn" id="clear-image-btn" title="Rasmni o'chirish">
+                            <img src="{% static 'images/remove.svg' %}" width="30" height="30" />
+                        </button>
+                    </div>
 
-                    {{ form.image }}
-                    <label for="id_image" class="custom-file-upload">
-                        Kompyuterdan tanlash
-                    </label>
+                    <span class="choice-separator">Yoki</span>
 
+                    <div class="input-and-clear-group">
+                        <label for="{{ form.video.id_for_label }}" class="custom-file-upload-btn video-btn">
+                        Video Tanlang
+                        </label>
+                        {{ form.video }}
+
+                        <button type="button" class="clear-media-btn" id="clear-video-btn" title="Videoni o'chirish">
+                            <img src="{% static 'images/remove.svg' %}" width="30" height="30" />
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -251,11 +381,6 @@
                 </div>
 
                 <div class="form-field">
-                    <label for="{{ form.post_type.id_for_label }}" style="color: white;">Post Turi</label>
-                    {{ form.post_type }}
-                </div>
-
-                <div class="form-field">
                     <label for="{{ form.hashtags.id_for_label }}" style="color: white;">Hashtaglar</label>
                     {{ form.hashtags }}
                 </div>
@@ -265,43 +390,165 @@
         </div>
     </form>
 </div>
+<script>
+window.onload = function() {
+    // --- CONSTANT FOR VIDEO DURATION LIMIT ---
+    const MAX_DURATION_SECONDS = 120; // 2 minutes (120 seconds)
+
+    // --- 1. Get DOM References ---
+    const imageInput = document.getElementById('id_image');
+    const videoInput = document.getElementById('id_video');
+    const previewArea = document.getElementById('media-preview-area');
+    const placeholderIcon = document.getElementById('media-preview-icon');
+    const placeholderText = document.querySelector('.placeholder-text');
+    const submitBtn = document.getElementById('submit-post-btn');
+
+    // NEW REFERENCES
+    const clearImageBtn = document.getElementById('clear-image-btn');
+    const clearVideoBtn = document.getElementById('clear-video-btn');
+
+    // Safety Check
+    if (!imageInput || !videoInput || !placeholderIcon || !placeholderText || !submitBtn || !clearImageBtn || !clearVideoBtn) {
+        console.error("Critical elements not found. Preview script aborted.");
+        return;
+    }
+
+    // --- Helper function to reset the preview to the default state ---
+    function resetPreview() {
+        previewArea.innerHTML = '';
+        placeholderIcon.style.display = 'block';
+        placeholderText.style.display = 'block';
+        placeholderText.textContent = "Hozircha Hech narsa Tanlanmagan";
+        
+        // Hide clear buttons and disable submit
+        clearImageBtn.style.display = 'none';
+        clearVideoBtn.style.display = 'none';
+        submitBtn.disabled = true;
+    }
+
+    // --- Helper function to handle the file selection and preview generation (UPDATED) ---
+    function handleFileSelection(fileInput) {
+        // Reset and then proceed with selection
+        resetPreview();
+        
+        if (fileInput.files && fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const fileURL = URL.createObjectURL(file);
+
+            // Hide placeholder elements initially
+            placeholderIcon.style.display = 'none';
+            placeholderText.style.display = 'none';
+            
+            // Note: submitBtn is re-enabled/disabled conditionally below
+
+            if (file.type.startsWith('image/')) {
+                // --- IMAGE PREVIEW LOGIC ---
+                const img = document.createElement('img');
+                img.src = fileURL;
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '100%';
+                img.style.objectFit = 'contain';
+                previewArea.appendChild(img);
+                
+                // Enable submit and show clear button for images
+                submitBtn.disabled = false;
+                clearImageBtn.style.display = 'flex'; 
+
+            } else if (file.type.startsWith('video/')) {
+                // --- VIDEO DURATION CHECK & THUMBNAIL LOGIC ---
+                const video = document.createElement('video');
+                video.src = fileURL;
+                video.preload = 'metadata';
+
+                video.onloadedmetadata = function() {
+                    URL.revokeObjectURL(fileURL); // Clean up the URL
+
+                    if (video.duration > MAX_DURATION_SECONDS) {
+                        // 1. DURATION EXCEEDED: Show Error
+                        alert(`Xatolik: Video ${MAX_DURATION_SECONDS / 60} daqiqadan oshmasligi kerak. Joriy uzunlik: ${video.duration.toFixed(2)} sekund.`);
+                        
+                        // 2. Clear the file input (must clear the one that was just selected)
+                        fileInput.value = ''; 
+                        
+                        // 3. Force a full visual reset
+                        resetPreview();
+                        
+                        return; // Stop further processing
+                    } 
+                    
+                    // --- DURATION IS OK: GENERATE THUMBNAIL ---
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Capture the frame
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = canvas.toDataURL('image/jpeg');
+                    thumbnail.style.maxWidth = '100%';
+                    thumbnail.style.maxHeight = '100%';
+                    thumbnail.style.objectFit = 'contain';
+                    
+                    previewArea.appendChild(thumbnail);
+                    
+                    // Enable submit and show clear button for videos
+                    submitBtn.disabled = false;
+                    clearVideoBtn.style.display = 'flex'; 
+                };
+                
+                // Start loading the video metadata
+                video.load();
+
+            } else {
+                // If file type is unexpected, force reset
+                fileInput.value = '';
+                resetPreview();
+                placeholderText.textContent = "Noto'g'ri fayl turi";
+            }
+        } else {
+            // File selection was canceled or cleared, force a full reset
+            resetPreview();
+        }
+    }
+
+    // --- Input Listeners (Exclusivity & Handling) ---
+    imageInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            videoInput.value = ''; // Clear the OTHER input
+            handleFileSelection(this);
+        } else {
+            resetPreview();
+        }
+    });
+
+    videoInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            imageInput.value = ''; // Clear the OTHER input
+            handleFileSelection(this);
+        } else {
+            resetPreview();
+        }
+    });
+
+    // --- Clear Button Listeners ---
+    clearImageBtn.addEventListener('click', function() {
+        imageInput.value = '';
+        resetPreview();
+    });
+
+    clearVideoBtn.addEventListener('click', function() {
+        videoInput.value = '';
+        resetPreview();
+    });
+
+    // Initialize: ensure preview is clear on load
+    resetPreview();
+};
+</script>
 {% else %}
 <p>Post qo'shish uchun tizimga kirishingiz kerak.</p>
 <a href="{% url 'login' %}">Kirish sahifasi</a>
 {% endif %}
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const imageInput = document.getElementById('id_image');
-        const imagePreview = document.getElementById('image-preview');
-        const imagePlaceholder = document.getElementById('image-placeholder');
-        const submitButton = document.getElementById('submit-post-btn');
-
-        // 1. Rasm tanlanganda uni oldindan ko'rish va tugmani faollashtirish
-        imageInput.addEventListener('change', function (event) {
-            if (event.target.files && event.target.files[0]) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                    imagePlaceholder.style.display = 'none';
-                    submitButton.disabled = false; // Rasm tanlansa, Post tugmasi faol
-                }
-
-                reader.readAsDataURL(event.target.files[0]);
-            } else {
-                imagePreview.style.display = 'none';
-                imagePlaceholder.style.display = 'flex';
-                submitButton.disabled = true; // Rasm yo'q bo'lsa, Post tugmasi nofaol
-            }
-        });
-
-        // Ikonkani Instagram logosi bilan almashtirish (Unicode/SVG o'rniga oddiy)
-        // Agar siz Unicode/SVG orqali Instagram ikonkasini topib qo'shsangiz, yanada yaxshi ko'rinadi.
-
-        // Foydalanuvchining avatarlarini ko'rsatish logikasi (Hozircha faqat kulrang doira)
-        // Bu qism backend tomonidan foydalanuvchi rasmi bilan to'ldirilishi kerak.
-    });
-</script>
 {% endblock content %}
