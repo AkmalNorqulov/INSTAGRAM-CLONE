@@ -102,8 +102,11 @@ class SettingsView(View):
 
 class SearchView(View):
     def get(self,request):
-        profile = request.user
-        return render(request, 'users/search.html', {'profile':profile})
+        users = UserProfile.objects.all().order_by('-id')
+        search_query = request.GET.get("q")
+        if search_query:
+            users = users.filter(username__icontains=search_query)
+        return render(request, 'users/search.html', {'users':users})
     
 
 

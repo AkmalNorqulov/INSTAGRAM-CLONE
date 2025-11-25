@@ -197,172 +197,89 @@
             padding: 5px;
             margin-left: 10px;
         }
+        button {
+        display: flex;
+        height: 3em;
+        width: 100px;
+        align-items: center;
+        justify-content: center;
+        background-color: #eeeeee4b;
+        border-radius: 3px;
+        letter-spacing: 1px;
+        transition: all 0.2s linear;
+        cursor: pointer;
+        border: none;
+        background: #fff;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        
+        }
+
+        button > svg {
+        margin-right: 5px;
+        margin-left: 5px;
+        font-size: 20px;
+        transition: all 0.4s ease-in;
+        }
+
+        button:hover > svg {
+        font-size: 1.2em;
+        transform: translateX(-5px);
+        }
+
+        button:hover {
+        box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
+        transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
-
+<a href="{% url 'users:profile' %}">  
+ <button style="">
+  <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024"><path d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z"></path></svg> 
+Back
+</button></a>
 <div class="search-container">
     <div class="header">Search</div>
 
     <div class="search-box-wrapper">
         <div class="search-input-group">
-            <input type="text" id="searchInput" class="search-input" placeholder="Search">
-            <button id="clearButton" class="clear-button">×</button>
+            <form method="GET">
+                <input type="text" id="searchInput" name="q" class="search-input" placeholder="Search" value="{{ request.GET.q }}" aria-label="Search">
+                <button type="submit" class="clear-button">×</button>
+            </form>
         </div>
     </div>
-
     <div class="recent-section">
         <div class="recent-header">
-            <span class="recent-title">Recent</span>
-            <span class="clear-all-button" onclick="clearAllRecent()">Clear all</span>
+            <div class="recent-title">Recent</div>
+            <div class="clear-all-button">Clear all</div>
         </div>
-
-        <ul class="recent-list" id="recentList">
-            </ul>
+        <ul class="recent-list">
+            {% for user in users %}
+            <a href='{% url "users:user_profile" user.username %}'>
+                <li class="recent-item">
+                <div class="user-info">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="profile-pic">
+                    {% else %}
+                        <div class="icon-placeholder">👤</div>
+                    {% endif %}
+                    <div class="user-names">
+                        <div class="username">
+                            {{ user.username }}
+                        </div>
+                        <div class="fullname">{{ user.get_full_name }}</div>
+                    </div>
+                </div>
+                {% comment %} <button class="remove-recent-button">×</button> {% endcomment %}
+            </li>
+            </a>
+            {% endfor %}
+        </ul>
     </div>
 </div>
-
-<script>
-    // --- JavaScript ---
-
-    const searchInput = document.getElementById('searchInput');
-    const clearButton = document.getElementById('clearButton');
-    const recentList = document.getElementById('recentList');
-
-    // 1. Qidiruv maydoni va 'X' tugmasi funksiyasi
-    
-    // Har safar kiritish maydonidagi matn o'zgarganda ishlaydi
-    searchInput.addEventListener('input', function() {
-        // Agar matn mavjud bo'lsa, "X" tugmasini ko'rsatish, aks holda yashirish
-        if (searchInput.value.length > 0) {
-            clearButton.style.display = 'block';
-        } else {
-            clearButton.style.display = 'none';
-        }
-    });
-
-    // "X" tugmasi bosilganda matnni tozalash funksiyasi
-    clearButton.addEventListener('click', function() {
-        searchInput.value = ''; // Kiritish maydonini tozalash
-        clearButton.style.display = 'none'; // "X" tugmasini yashirish
-        searchInput.focus(); // Foydalanuvchiga yana yozishni boshlashi uchun fokusni qaytarish
-    });
-
-    // 2. Yaqinda qidirilganlar ro'yxati funksiyasi
-
-    // Ro'yxat uchun ma'lumotlar (Sizning rasmingizdan olingan misollar)
-    const recentSearches = [
-        { type: 'bot', username: 'savedinstabot_', fullname: 'Saved Insta Bot - Telegram bot', pic: 'tg.png' },
-        { type: 'profile', username: 'telefonchi_oka_', fullname: '📱', pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'profile', username: 'damonnxtvd', fullname: '', pic: 'default.png' },
-        { type: 'profile', username: 'damon.damn_', fullname: 'Damon Salvatore', pic: 'default.png' },
-        { type: 'profile', username: 'icon_supermodel', fullname: 'Icon Supermodel | Francisco CHICO fanpag', pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },
-        { type: 'verified', username: 'laguneofficial', fullname: 'Lagune® • Following', isVerified: true, pic: 'default.png' },                                                                                                                                                                                                                                                                                                                                
-    ];
-
-    // Ro'yxatni HTML ga chizish funksiyasi
-    function renderRecentList(list) {
-        recentList.innerHTML = ''; // Ro'yxatni tozalash
-
-        list.forEach((item, index) => {
-            const listItem = document.createElement('li');
-            listItem.className = 'recent-item';
-            listItem.setAttribute('data-index', index); // O'chirish uchun indeks
-
-            let profileHtml;
-            if (item.icon && item.isSearch) {
-                // Faqat _asalka kabi qidiruv ikonkasiga ega element
-                profileHtml = `
-                    <div class="user-info">
-                        <div class="icon-placeholder magnifying-glass">${item.icon}</div>
-                        <div class="user-names">
-                            <span class="username">${item.username}</span>
-                        </div>
-                    </div>
-                `;
-            } else if (item.isGucci) {
-                 // Gucci kabi logotipli maxsus element
-                profileHtml = `
-                    <div class="user-info">
-                        <img src="${item.pic}" class="profile-pic" alt="${item.username}" style="border-radius: 10px;">
-                        <div class="user-names">
-                            <span class="username">${item.username} ${item.isVerified ? '<span class="verified-badge">✔</span>' : ''}</span>
-                            <span class="fullname">${item.fullname}</span>
-                        </div>
-                    </div>
-                `;
-            }
-            else {
-                // Oddiy profil va botlar
-                profileHtml = `
-                    <div class="user-info">
-                        <img src="${item.pic}" class="profile-pic" alt="${item.username}">
-                        <div class="user-names">
-                            <span class="username">${item.username} ${item.isVerified ? '<span class="verified-badge">✔</span>' : ''}</span>
-                            <span class="fullname">${item.fullname}</span>
-                        </div>
-                    </div>
-                `;
-            }
-            
-
-            const removeButton = `
-                <button class="remove-recent-button" onclick="removeRecentItem(${index})">×</button>
-            `;
-
-            listItem.innerHTML = profileHtml + removeButton;
-            recentList.appendChild(listItem);
-        });
-    }
-
-    // Ro'yxatdan bitta elementni o'chirish funksiyasi
-    function removeRecentItem(index) {
-        // HTML elementini o'chirish
-        const itemToRemove = document.querySelector(`.recent-item[data-index="${index}"]`);
-        if (itemToRemove) {
-            itemToRemove.remove();
-        }
-
-        // Haqiqiy ro'yxatdan o'chirish (Agar ma'lumotlar bazasi mavjud bo'lsa, bu yerda o'chirish so'rovi ketadi)
-        // Hozircha bu qism renderRecentList() funksiyasini qayta chaqirmaydi,
-        // chunki bu oddiy UI kloni. Haqiqiy ilovada bu ma'lumotlar bazasi bilan ishlaydi.
-        
-        console.log(`Element ${index} ro'yxatdan o'chirildi.`);
-        
-        // Agar haqiqiy o'chirish kerak bo'lsa:
-        // recentSearches.splice(index, 1);
-        // renderRecentList(recentSearches);
-    }
-
-    // Barcha elementlarni tozalash funksiyasi
-    function clearAllRecent() {
-        if (confirm("Haqiqatan ham barcha yaqindagi qidiruvlarni tozalashni xohlaysizmi?")) {
-            recentList.innerHTML = ''; // HTML dan barcha elementlarni o'chirish
-            // Haqiqiy ilovada: ma'lumotlar bazasidan barcha ma'lumotlarni o'chirish so'rovi
-            // recentSearches.length = 0;
-            console.log("Barcha yaqindagi qidiruvlar tozalandi.");
-        }
-    }
-
-    // Sahifa yuklanganda ro'yxatni chizish
-    document.addEventListener('DOMContentLoaded', () => {
-        renderRecentList(recentSearches);
-    });
-</script>
 
 </body>
 </html>
