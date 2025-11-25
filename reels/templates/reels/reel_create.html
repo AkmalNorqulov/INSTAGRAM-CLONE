@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Yangi Reel Yuklash{% endblock %}
+{% block title %}New Reel Yuklash{% endblock %}
 
 {% block content %}
 <style>
     /* --- PAGE LAYOUT --- */
     body {
-        background-color: #fafafa;
+        background-color: #000000;
     }
     
     .upload-container {
         max-width: 800px;
         margin: 40px auto;
-        background: #fff;
+        background: #000000;
         border: 1px solid #dbdbdb;
         border-radius: 8px;
         display: flex;
@@ -93,7 +93,7 @@
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        background-color: #efefef;
+        background-color: #000000;
         margin-right: 10px;
         overflow: hidden;
     }
@@ -166,13 +166,28 @@
         .preview-section { height: 400px; }
         .form-section { height: auto; }
     }
+
+    form textarea.caption-input {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+}
+
+form textarea.caption-input::placeholder {
+    color: #aaa !important;
+}
+.caption-input {
+    padding: 18px 14px;
+}
+
+
 </style>
 
 <div class="upload-container">
     
     <div class="loading-overlay" id="loading-overlay">
         <div class="spinner"></div>
-        <p style="margin-top: 10px; font-weight: 600;">Yuklanmoqda...</p>
+        <p style="margin-top: 10px; font-weight: 600;">Loading...</p>
     </div>
 
     <form method="POST" enctype="multipart/form-data" id="reel-form" style="display: contents;">
@@ -185,14 +200,14 @@
                 <div class="upload-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
                 </div>
-                <h3>Video va Reellarni bu yerga tashlang</h3>
-                <label for="id_video" class="select-btn">Kompyuterdan tanlash</label>
+                <h3>Upload videos and reels here</h3>
+                <label for="id_video" class="select-btn">Upload computer</label>
                 {{ form.video }} 
             </div>
         </div>
 
         <div class="form-section">
-            <div class="form-header">Yangi Reel</div>
+            <div class="form-header" style="color: white;">New Reel</div>
             
             <div class="user-info">
                 <div class="user-avatar">
@@ -206,9 +221,10 @@
             </div>
 
             {{ form.caption }}
+         
 
             <div class="meta-inputs">
-                <button type="submit" class="submit-btn" id="submit-btn">Bo'lishish</button>
+                <button type="submit" class="submit-btn" id="submit-btn">To be</button>
             </div>
         </div>
     </form>

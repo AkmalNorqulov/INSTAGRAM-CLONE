@@ -19,7 +19,7 @@ class ReelCreateForm(forms.ModelForm):
             'caption': forms.Textarea(attrs={
                 'class': 'caption-input',
                 'rows': 4,
-                'placeholder': 'Reel haqida yozing... #trend #reels',
+                'placeholder': 'About reel write... #trend #reels',
                 'maxlength': '2200'
             }),
         }
