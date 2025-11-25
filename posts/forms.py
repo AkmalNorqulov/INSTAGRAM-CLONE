@@ -7,7 +7,7 @@ from .models import InstagramPost
 class InstagramPostCreateForm(forms.ModelForm):
     # caption maydonini kattaroq matn maydoni (textarea) qilib belgilaymiz
     caption = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Sarlavha qo‘shish (max 2200 belgi)...'}),
+        widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Create title (max 2200 sign)...'}),
         required=False
     )
     
@@ -25,7 +25,7 @@ class InstagramPostCreateForm(forms.ModelForm):
             'video': forms.FileInput(attrs={'accept': 'video/*'}),
             
             # Joylashuv uchun oddiy text input
-            'location': forms.TextInput(attrs={'placeholder': 'Joylashuv qo‘shish (ixtiyoriy)'}),
+            'location': forms.TextInput(attrs={'placeholder': 'Add location (ixtiyoriy)'}),
             
             # Hashtaglar uchun oddiy text input
             'hashtags': forms.TextInput(attrs={'placeholder': '#tag1, #tag2, #tag3 (vergul bilan ajrating)'}),
