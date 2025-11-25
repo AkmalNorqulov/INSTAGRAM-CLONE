@@ -41,8 +41,8 @@ comments, and more.
 ## 📁 Project Structure
 
     instaclone/
-    ├── core/
-    ├── accounts/
+    ├── users/
+    ├── reels/
     ├── posts/
     ├── static/
     ├── templates/
@@ -53,8 +53,8 @@ comments, and more.
 
 ### 1. Clone the repository
 
-    git clone https://github.com/yourusername/instagram-clone.git
-    cd instagram-clone
+    git clone https://github.com/AkmalNorqulov/INSTAGRAM-CLONE.git
+    cd INSTAGRAM-CLONE
 
 ### 2. Create virtual environment
 
@@ -64,7 +64,7 @@ comments, and more.
 
 ### 3. Install dependencies
 
-    pip install -r requirements.txt
+    pip install django, pillow
 
 ### 4. Run migrations
 
@@ -82,11 +82,9 @@ Visit: http://127.0.0.1:8000/
 
 ## 🛠️ Future Improvements
 
--   Messaging system
--   Stories feature
+-   Posts feature
+-   Accounts management
 -   Explore recommendations
--   Real-time notifications
--   REST API with DRF
 
 ## 📝 License
 
