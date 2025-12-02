@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 {% block title %}Instagram profile {% endblock %}
 
@@ -172,7 +172,11 @@
 
 <div class="profile-container">
     <div class="profile-header">
-        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+        {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+        {% else %}
+            <img src="{% static 'images/user.jpg' %}" alt="Default Profile Picture" class="profile-pic">
+        {% endif %}
 
         <div class="profile-info">
             <div class="profile-header-top">
