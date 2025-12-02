@@ -8,4 +8,9 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('', include('posts.urls')),
     path('reels/', include('reels.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
