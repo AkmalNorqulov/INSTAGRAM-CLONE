@@ -1,0 +1,219 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #000000 !important; 
+  color: #ffffff;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+html {
+  
+
+    cursor: url('/static/images/Background.svg'), auto ;
+ 
+    
+}
+
+
+a,
+button,
+label[for],
+input[type="submit"],
+input[type="button"],
+select,
+.menu-link,         
+.dropdown-item,     
+.more-btn,          
+.meta-btn           
+{
+    cursor: url('/static/images/Background.svg'), pointer;
+  
+}
+
+
+.settings-container {
+  max-width: 630px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.settings-header {
+  padding: 20px 16px;
+  border-bottom: 1px solid #262626;
+}
+
+.settings-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.settings-content {
+  padding: 16px;
+}
+
+.meta-card {
+  background-color: #1c1c1e;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.meta-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.meta-logo {
+  width: 24px;
+  height: 24px;
+}
+
+.meta-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.card-description {
+  font-size: 14px;
+  color: #a0a0a0;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.card-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 16px;
+}
+
+.card-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  color: #e0e0e0;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.card-link:hover {
+  opacity: 0.7;
+}
+
+.link-icon {
+  width: 20px;
+  height: 20px;
+  color: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.see-more {
+  display: inline-block;
+  color: #0095f6;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 8px;
+}
+
+.see-more:hover {
+  color: #ffffff;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a0a0a0;
+  text-transform: none;
+  margin: 32px 0 12px 0;
+  padding-left: 4px;
+}
+
+.section-title:first-of-type {
+  margin-top: 8px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 4px;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.menu-item:hover {
+  background-color: #1c1c1e;
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  flex-shrink: 0;
+  stroke-width: 1.5;
+}
+
+.menu-item span {
+  flex: 1;
+  font-weight: 400;
+}
+
+
+/* From Uiverse.io by Jedi-hongbin */ 
+button {
+ display: flex;
+ height: 3em;
+ width: 100px;
+ align-items: center;
+ justify-content: center;
+ background-color: #eeeeee4b;
+ border-radius: 3px;
+ letter-spacing: 1px;
+ transition: all 0.2s linear;
+ cursor: pointer;
+ border: none;
+ background: #fff;
+ margin-left: 17%;
+ margin-top: 1%;
+}
+
+button > svg {
+ margin-right: 5px;
+ margin-left: 5px;
+ font-size: 20px;
+ transition: all 0.4s ease-in;
+}
+
+button:hover > svg {
+ font-size: 1.2em;
+ transform: translateX(-5px);
+}
+
+button:hover {
+ box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
+ transform: translateY(-2px);
+}
