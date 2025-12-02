@@ -16,8 +16,8 @@ else:
     DEBUG = False
 
 
-ALLOWED_HOSTS = ["https://instagram-clone-ra16.onrender.com/"]
-CSRF_TRUSTED_ORIGINS = ["https://instagram-clone-ra16.onrender.com/"]
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["*"]
 
 
 INSTALLED_APPS = [
