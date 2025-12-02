@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'reels',
     'cloudinary',
     'cloudinary_storage',
-    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
