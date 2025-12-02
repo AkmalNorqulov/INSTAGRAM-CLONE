@@ -1,0 +1,353 @@
+/* --- Global Reset & Variables --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+}
+
+/* --------------------------------------------------------------------------
+🚨 YANGI QO'SHILGAN KURSOR KODI 🚨
+--------------------------------------------------------------------------
+*/
+
+/* 1. Butun sayt uchun standart (default) kursorni o'rnatamiz */
+html {
+    /* MUHIM: Bu yerga OQ RANGDAGI ikonka faylingizga yo'lni yozing!
+       Masalan: '/static/images/hand-white.cur' 
+    */
+    cursor: url('/static/images/Background.svg'), auto ;
+ 
+    
+}
+
+/* 2. BARCHA bosiladigan (klikk) elementlar uchun ham
+   shu kursorni ishlatishga majburlaymiz.
+*/
+a,
+button,
+label[for],
+input[type="submit"],
+input[type="button"],
+select,
+.menu-link,         /* Sizning kodingizdan olindi */
+.dropdown-item,     /* Sizning kodingizdan olindi */
+.more-btn,          /* Sizning kodingizdan olindi */
+.meta-btn           /* Sizning kodingizdan olindi */
+{
+    /* MUHIM: Bu yerga ham OQ RANGDAGI ikonka faylingizga yo'lni yozing!
+       Masalan: '/static/images/hand-white.cur' 
+    */
+    cursor: url('/static/images/Background.svg'), pointer;
+    size: 20px;
+}
+
+/* --- KURSOR KODI TUGADI --- */
+
+
+:root {
+    /* Define colors for light and dark modes (assuming dark mode sidebar) */
+    --text-primary: #000000;      /* Typically used for main content/light elements */
+    --text-secondary: #737373;
+    --bg-primary: #ffffff;        /* Typically used for main content background */
+    
+    /* Sidebar specific colors (assumed dark based on original HTML/CSS structure) */
+    --sidebar-bg: #000000;
+    --sidebar-text: #f2f2f2;
+    --sidebar-hover-bg: #363636;  /* Adjusted for a visible hover contrast */
+    
+    --border-color: #363636;      /* Darker border for dark mode sidebar */
+    --accent-color: #0095f6;
+    --badge-bg: #ff3040;
+    
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+/* Base body style (assumes light main content area) */
+body {
+    margin: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* --- Sidebar Layout --- */
+.sidebar {
+    width: 245px;
+    height: 100vh;
+    background-color: var(--sidebar-bg); /* Use defined dark background */
+    border-right: 1px solid var(--border-color);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 50px;
+}
+
+/* .sidebar-logo {
+    padding: 25px 12px 16px;
+    margin-bottom: 19px;
+}
+
+.instagram-icon {
+    width: 103px;
+    height: 29px;
+    color: var(--sidebar-text);
+} */
+
+/* .instagram-logo {
+    width: 120px;
+    margin-left: 39%;
+    margin-top: -28%;
+} */
+
+.sidebar-menu {
+    list-style: none;
+    flex: 1;
+}
+
+.menu-item {
+    margin-bottom: 4px;
+}
+
+/* --- Menu Link Hover Fixes --- */
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    text-decoration: none;
+    border-radius: 8px;
+    /* cursor: pointer; <-- BU QATORNI O'CHIRDIK, CHUNKI TEPADA QO'SHDIK */
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    position: relative;
+    border: none;
+    
+    /* Base color for text and icons inside the link (assuming dark sidebar) */
+    color: var(--sidebar-text); 
+    background-color: transparent; 
+}
+
+/* Ensure the elements inside the link inherit the hover properties */
+.menu-link .menu-icon,
+.menu-link .menu-text,
+.menu-link span {
+    color: var(--sidebar-text); /* Default color is light */
+    transition: color 0.2s ease;
+}
+
+.menu-link:hover {
+    background-color: var(--sidebar-hover-bg); /* Dark gray background on hover */
+    /* Remove the border added on hover from previous attempt */
+    border: none !important;
+    transform: scale(1.01); /* Subtle visual feedback */
+}
+
+.menu-item.active .menu-link {
+    font-weight: 700;
+}
+
+.menu-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 16px;
+    flex-shrink: 0;
+    stroke: currentColor; /* Allows SVG stroke to inherit parent color */
+}
+
+.menu-item.active .menu-icon {
+    stroke-width: 2.5;
+}
+
+.menu-text {
+    font-size: 16px;
+    line-height: 20px;
+    flex: 1;
+}
+
+.badge {
+    background-color: var(--badge-bg);
+    color: white;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+    margin-left: auto;
+}
+
+.profile-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    /* margin-right: 16px; */   
+    flex-shrink: 0;
+}
+
+.sidebar-footer { 
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+}
+
+.meta-btn {
+    margin-bottom: 4px;
+    text-align: left;
+    width: 100%; /* Make button fill footer width */
+}
+
+
+/* --- More Dropdown Styling Fixes --- */
+
+/* --- Dropdown Container and Positioning --- */
+
+/* Use the list item as the relative container */
+.more-menu-item {
+    position: relative;
+    display: flex;
+    justify-content: start; /* Essential for positioning the menu */
+    align-items: center;
+    padding: 0; /* Clear padding from the list item */
+}
+
+/* Hide the dropdown content by default */
+.more-dropdown-content {
+    display: none; 
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 8px); /* Positions the menu above the button with a small gap */
+    
+    /* Dropdown container appearance */
+    background: #262626; 
+    border: 1px solid #363636; 
+    border-radius: 8px;
+    width: 240px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    padding: 4px 0;
+}
+
+/* The class added by JavaScript to make the menu visible */
+.more-dropdown-content.visible {
+    display: block; 
+}
+
+/* --- Dropdown Item Styles (Menu Links) --- */
+
+.dropdown-item {
+    display: block;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: white; /* Text color inside the dark dropdown */
+    font-size: 14px;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #3e3e3e; /* Slight highlight on hover */
+}
+.more-btn {
+  width: 100%;
+  text-align: start;
+  font-size: 16px;
+}
+/* -------------------------------------------------------------------------- */
+/* 🚨 FIX: COLLAPSED SIDEBAR ADJUSTMENTS 🚨                  */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 1264px) {
+    /* 1. Ensure the 'More' text disappears in the collapsed view */
+    .more-menu-item .menu-text {
+        display: none;
+    }
+
+    /* 2. Reset the layout/padding for the list item in collapsed view */
+    .more-menu-item {
+        /* This padding ensures the icon is centered vertically, matching other icons */
+        padding: 4px 0;
+        margin-bottom: 4px; 
+    }
+    
+    .more-menu-item .menu-link {
+        /* Ensure the button content is centered */
+        justify-content: center;
+        padding: 10px 0; /* Reduce horizontal padding to fit 72px width */
+    }
+
+    /* 3. Update positioning for collapsed view when the sidebar is narrow */
+    .more-dropdown-content {
+        left: 72px; /* Position dropdown to the right of the collapsed sidebar (72px wide) */
+        bottom: auto; /* Reset bottom position */
+        top: -100px; /* Adjust top positioning for placement next to the icon (may need fine-tuning) */
+    }
+}
+/* --- Main Content Layout --- */
+.main-content {
+    margin-left: 245px;
+    padding: 40px;
+    flex: 1;
+}
+
+.main-content h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.main-content p {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+/* --- Media Queries for Responsive Sidebar --- */
+@media (max-width: 1264px) {
+    .sidebar {
+        width: 72px;
+        padding: 8px;
+    }
+
+    .sidebar-logo {
+        padding: 25px 0 36px 0; /* Center icon when text is hidden */
+        display: flex;
+        justify-content: center;
+    }
+    
+    .instagram-icon {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .instagram-logo {
+        display: none; /* Hide the wordmark */
+    }
+
+    .menu-link {
+        justify-content: center; /* Center icon when text is hidden */
+        padding: 10px 0;
+    }
+
+    .menu-icon {
+        margin-right: 0;
+    }
+
+    .menu-text {
+        display: none;
+    }
+
+
+    .badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 0;
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+        line-height: 16px;
+    }
+
+    .main-content {
+        margin-left: 72px;
+    }
+}
