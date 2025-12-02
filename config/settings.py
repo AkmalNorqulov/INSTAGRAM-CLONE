@@ -2,6 +2,7 @@ from pathlib import Path
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import os
 
 CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
 
