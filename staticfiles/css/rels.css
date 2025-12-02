@@ -1,5 +1,0 @@
-#reels-container{ display:flex; flex-direction:column; gap:16px; }
-.reel-card{ border:1px solid #ddd; padding:8px; border-radius:8px; max-width:420px; }
-.reel-video{ width:100%; height:auto; display:block; border-radius:8px; }
-.reel-meta{ padding-top:8px; }
-.like-btn{ background:none; border:0; cursor:pointer; font-size:18px; }
